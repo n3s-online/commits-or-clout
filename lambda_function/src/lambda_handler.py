@@ -6,6 +6,7 @@ import boto3
 # import tweepy  # Remove tweepy import
 from datetime import datetime, timezone
 from jinja2 import Environment, FileSystemLoader, Template
+import pytz
 
 # Configure logging
 logger = logging.getLogger()
@@ -209,8 +210,13 @@ def handler(event, context):
         # Generate the ratio text subtitle
         ratio_text_subtitle = "Focusing more on building than on social media presence!" if ratio > 1 else "I need to build more..."
         
-        # Format the current date
-        current_date = datetime.now().strftime("%B %d, %Y")
+        # Format the current date with time in PST timezone
+        # Get current time in PST/PDT (will automatically handle daylight saving)
+        pacific_tz = pytz.timezone('America/Los_Angeles')
+        current_datetime = datetime.now(pacific_tz)
+        # Use PST/PDT depending on daylight saving
+        timezone_name = "PDT" if current_datetime.dst() else "PST"
+        current_date = current_datetime.strftime("%B %d, %Y at %I:%M %p") + f" {timezone_name}"
         
         # HTML template
         html_template = """<!DOCTYPE html>
