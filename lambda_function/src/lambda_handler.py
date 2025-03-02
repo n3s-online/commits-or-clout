@@ -23,39 +23,74 @@ def get_user_repositories(username, token):
     """
     Fetch all repositories for a GitHub user.
     """
-    url = f"https://api.github.com/users/{username}/repos"
-    headers = {"Authorization": f"token {token}"}
-    params = {"per_page": 100}  # Maximum 100 repos per page
+    url = f"https://api.github.com/user/repos"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    params = {
+        "per_page": 100,
+        "type": "all",
+    }  # Correct parameters
     all_repos = []
-    
+
     try:
-        # Handle pagination
-        while url:
+        page = 1
+        while True:
+            params["page"] = page
             response = requests.get(url, headers=headers, params=params)
-            response.raise_for_status()
+
+            # Log the response status and headers for debugging
+            logger.info(f"API Response Status: {response.status_code}")
+            logger.info(f"API Response Headers: {response.headers}")
+
+            response.raise_for_status()  # Raise HTTPError for bad responses (4xx or 5xx)
             repos = response.json()
+
+            if not repos:  # No more repositories
+                logger.info(f"No more repositories found on page {page}")
+                break
+
             all_repos.extend(repos)
-            
-            # Check if there are more pages
-            if 'next' in response.links:
-                url = response.links['next']['url']
-                params = {}  # Parameters are included in the next URL
+            logger.info(f"Fetched page {page} with {len(repos)} repositories")
+
+            # Check if there's a next page using Link header
+            if "Link" in response.headers:
+                if 'rel="next"' not in response.headers["Link"]:
+                    logger.info("No more pages according to Link header")
+                    break
             else:
-                url = None
-                
+                # If no Link header and we got less than per_page results, we're done
+                if len(repos) < params["per_page"]:
+                    logger.info(
+                        "Got fewer results than per_page limit, assuming last page"
+                    )
+                    break  # This is the problem.  Remove this break.
+
+            page += 1
+
         logger.info(f"Found {len(all_repos)} repositories for user {username}")
         return all_repos
     except requests.exceptions.RequestException as e:
         logger.error(f"Error fetching repositories: {e}")
+        logger.error(
+            f"Response content: {e.response.content if hasattr(e, 'response') else 'No response'}"
+        )
         return []
+
 
 def get_commits_since_jan_1(username, token):
     """
     Fetch the number of commits made to all GitHub repositories since January 1st.
     """
     since = datetime(2025, 1, 1, tzinfo=timezone.utc).isoformat()
-    headers = {"Authorization": f"token {token}"}
-    params = {"since": since}
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    params = {"since": since, "per_page": 100}  # Increase page size and add pagination
     total_commits = 0
     
     try:
@@ -65,14 +100,31 @@ def get_commits_since_jan_1(username, token):
         for repo in repositories:
             repo_name = repo['name']
             url = f"https://api.github.com/repos/{username}/{repo_name}/commits"
+            repo_commits = 0
             
             try:
-                response = requests.get(url, headers=headers, params=params)
-                response.raise_for_status()
-                commits = response.json()
+                page = 1
+                while True:
+                    params["page"] = page
+                    response = requests.get(url, headers=headers, params=params)
+                    response.raise_for_status()
+                    commits = response.json()
+                    
+                    # Add commits from this page to repo total
+                    page_commits = len(commits)
+                    repo_commits += page_commits
+                    
+                    # Check if we need to fetch more pages
+                    if page_commits < params["per_page"]:
+                        break  # No more pages
+                    
+                    # Check if there's a next page using Link header
+                    if "Link" in response.headers:
+                        if 'rel="next"' not in response.headers["Link"]:
+                            break
+                    
+                    page += 1
                 
-                # Add commits from this repo to total
-                repo_commits = len(commits)
                 total_commits += repo_commits
                 logger.info(f"Found {repo_commits} commits in repo {repo_name} since Jan 1")
                 
