@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 import os
+import subprocess
+import shutil
+import tempfile
 from aws_cdk import (
     App,
     Stack,
@@ -10,6 +13,7 @@ from aws_cdk import (
     aws_events_targets as targets,
     aws_s3 as s3,
     aws_ssm as ssm,
+    aws_iam as iam,
 )
 from constructs import Construct
 
@@ -33,56 +37,70 @@ class CommitsOrCloutStack(Stack):
             )
         )
 
-        # Retrieve parameters from SSM Parameter Store
-        github_token = ssm.StringParameter.from_secure_string_parameter_attributes(
-            self, "GitHubToken",
-            parameter_name="/commits-or-clout/github-token",
-            version=1
-        )
-        
-        github_username = ssm.StringParameter.from_string_parameter_attributes(
-            self, "GitHubUsername",
-            parameter_name="/commits-or-clout/github-username",
-            version=1
-        )
-        
-        twitter_bearer_token = ssm.StringParameter.from_secure_string_parameter_attributes(
-            self, "TwitterBearerToken",
-            parameter_name="/commits-or-clout/twitter-bearer-token",
-            version=1
-        )
-        
-        twitter_username = ssm.StringParameter.from_string_parameter_attributes(
-            self, "TwitterUsername",
-            parameter_name="/commits-or-clout/twitter-username",
-            version=1
-        )
+        # Define parameter names
+        github_token_param_name = "/commits-or-clout/github-token"
+        github_username_param_name = "/commits-or-clout/github-username"
+        twitter_bearer_token_param_name = "/commits-or-clout/twitter-bearer-token"
+        twitter_username_param_name = "/commits-or-clout/twitter-username"
 
-        # Define the Lambda function
-        lambda_function = _lambda.Function(
-            self, 
-            "CommitsOrCloutUpdater",
-            runtime=_lambda.Runtime.PYTHON_3_9,
-            code=_lambda.Code.from_asset("../lambda_function/src"),
-            handler="lambda_handler.handler",
-            timeout=Duration.seconds(120),
-            memory_size=128,
-            description="Lambda function that updates the CommitsOrClout website",
-            environment={
-                "S3_BUCKET": website_bucket.bucket_name,
-                "S3_KEY": "index.html",
-                "GITHUB_TOKEN": github_token.string_value,
-                "GITHUB_USERNAME": github_username.string_value,
-                "TWITTER_BEARER_TOKEN": twitter_bearer_token.string_value,
-                "TWITTER_USERNAME": twitter_username.string_value,
-            },
-        )
+        # Create a temporary directory for Lambda code with dependencies
+        temp_dir = tempfile.mkdtemp()
+        try:
+            # Copy Lambda source code to temp directory
+            lambda_src_dir = os.path.abspath("../lambda_function/src")
+            for item in os.listdir(lambda_src_dir):
+                src_item = os.path.join(lambda_src_dir, item)
+                dst_item = os.path.join(temp_dir, item)
+                if os.path.isdir(src_item):
+                    shutil.copytree(src_item, dst_item)
+                else:
+                    shutil.copy2(src_item, dst_item)
+            
+            # Install dependencies to the temp directory
+            requirements_file = os.path.abspath("../lambda_function/requirements.txt")
+            subprocess.check_call([
+                "pip", "install", 
+                "-r", requirements_file,
+                "--target", temp_dir,
+                "--no-user"
+            ])
+            
+            # Define the Lambda function with dependencies included
+            lambda_function = _lambda.Function(
+                self, 
+                "CommitsOrCloutUpdater",
+                runtime=_lambda.Runtime.PYTHON_3_9,
+                code=_lambda.Code.from_asset(temp_dir),
+                handler="lambda_handler.handler",
+                timeout=Duration.seconds(120),
+                memory_size=128,
+                description="Lambda function that updates the CommitsOrClout website",
+                environment={
+                    "S3_BUCKET": website_bucket.bucket_name,
+                    "S3_KEY": "index.html",
+                    "GITHUB_TOKEN_PARAM_NAME": github_token_param_name,
+                    "GITHUB_USERNAME_PARAM_NAME": github_username_param_name,
+                    "TWITTER_BEARER_TOKEN_PARAM_NAME": twitter_bearer_token_param_name,
+                    "TWITTER_USERNAME_PARAM_NAME": twitter_username_param_name,
+                },
+            )
+        finally:
+            # Clean up the temporary directory when done
+            # Comment this out if you want to inspect the contents for debugging
+            shutil.rmtree(temp_dir)
         
         # Grant the Lambda function permission to read the SSM parameters
-        github_token.grant_read(lambda_function)
-        github_username.grant_read(lambda_function)
-        twitter_bearer_token.grant_read(lambda_function)
-        twitter_username.grant_read(lambda_function)
+        lambda_function.add_to_role_policy(
+            iam.PolicyStatement(
+                actions=["ssm:GetParameter", "ssm:GetParameters"],
+                resources=[
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{github_token_param_name}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{github_username_param_name}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{twitter_bearer_token_param_name}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{twitter_username_param_name}",
+                ]
+            )
+        )
         
         # Grant the Lambda function permission to write to the S3 bucket
         website_bucket.grant_write(lambda_function)

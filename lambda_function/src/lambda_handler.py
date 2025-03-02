@@ -12,13 +12,36 @@ import pytz
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-# Environment variables
-GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN")
-GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME", "your_github_username")
-TWITTER_BEARER_TOKEN = os.environ.get("TWITTER_BEARER_TOKEN")
-TWITTER_USERNAME = os.environ.get("TWITTER_USERNAME", "your_twitter_username")
+# SSM client for retrieving parameters
+ssm_client = boto3.client('ssm')
+
+def get_parameter(param_name, with_decryption=True):
+    """
+    Get a parameter from SSM Parameter Store
+    """
+    try:
+        response = ssm_client.get_parameter(
+            Name=param_name,
+            WithDecryption=with_decryption
+        )
+        return response['Parameter']['Value']
+    except Exception as e:
+        logger.error(f"Error retrieving parameter {param_name}: {e}")
+        return None
+
+# Environment variables for parameter names
+GITHUB_TOKEN_PARAM_NAME = os.environ.get("GITHUB_TOKEN_PARAM_NAME")
+GITHUB_USERNAME_PARAM_NAME = os.environ.get("GITHUB_USERNAME_PARAM_NAME")
+TWITTER_BEARER_TOKEN_PARAM_NAME = os.environ.get("TWITTER_BEARER_TOKEN_PARAM_NAME")
+TWITTER_USERNAME_PARAM_NAME = os.environ.get("TWITTER_USERNAME_PARAM_NAME")
 S3_BUCKET = os.environ.get("S3_BUCKET")
-S3_KEY = os.environ.get("S3_KEY", "index.html")  # The path to your index.html in the S3 bucket
+S3_KEY = os.environ.get("S3_KEY", "index.html")
+
+# Retrieve actual values from Parameter Store
+GITHUB_TOKEN = get_parameter(GITHUB_TOKEN_PARAM_NAME)
+GITHUB_USERNAME = get_parameter(GITHUB_USERNAME_PARAM_NAME, False) or "your_github_username"
+TWITTER_BEARER_TOKEN = get_parameter(TWITTER_BEARER_TOKEN_PARAM_NAME)
+TWITTER_USERNAME = get_parameter(TWITTER_USERNAME_PARAM_NAME, False) or "your_twitter_username"
 
 def get_user_repositories(username, token):
     """
