@@ -14,6 +14,9 @@ from aws_cdk import (
     aws_s3 as s3,
     aws_ssm as ssm,
     aws_iam as iam,
+    aws_cloudfront as cloudfront,
+    aws_cloudfront_origins as origins,
+    aws_certificatemanager as acm,
 )
 from constructs import Construct
 
@@ -37,11 +40,44 @@ class CommitsOrCloutStack(Stack):
             )
         )
 
+        # Request a certificate for commits.willness.dev
+        # Note: You'll need to validate this certificate manually with Porkbun
+        certificate = acm.Certificate(
+            self, "CommitsCertificate",
+            domain_name="commits.willness.dev",
+            validation=acm.CertificateValidation.from_email()  # Email validation is simpler with external DNS
+        )
+
+        # Create a CloudFront distribution
+        distribution = cloudfront.Distribution(
+            self, "CommitsDistribution",
+            default_behavior=cloudfront.BehaviorOptions(
+                origin=origins.S3Origin(website_bucket),
+                viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+                cache_policy=cloudfront.CachePolicy.CACHING_OPTIMIZED,
+            ),
+            domain_names=["commits.willness.dev"],
+            certificate=certificate,
+            default_root_object="index.html",
+        )
+
+        # Output the CloudFront domain name and distribution ID
+        from aws_cdk import CfnOutput
+        CfnOutput(self, "CloudFrontDomainName", 
+                  value=distribution.distribution_domain_name,
+                  description="The domain name of the CloudFront distribution")
+        
+        CfnOutput(self, "CloudFrontDistributionId", 
+                  value=distribution.distribution_id,
+                  description="The ID of the CloudFront distribution")
+
         # Define parameter names
+        # cli command to create these parameters: aws ssm put-parameter --name "" --type "SecureString" --value ""
         github_token_param_name = "/commits-or-clout/github-token"
         github_username_param_name = "/commits-or-clout/github-username"
         twitter_bearer_token_param_name = "/commits-or-clout/twitter-bearer-token"
         twitter_username_param_name = "/commits-or-clout/twitter-username"
+        discord_webhook_url_param_name = "/commits-or-clout/discord-webhook-url"
 
         # Create a temporary directory for Lambda code with dependencies
         temp_dir = tempfile.mkdtemp()
@@ -82,6 +118,7 @@ class CommitsOrCloutStack(Stack):
                     "GITHUB_USERNAME_PARAM_NAME": github_username_param_name,
                     "TWITTER_BEARER_TOKEN_PARAM_NAME": twitter_bearer_token_param_name,
                     "TWITTER_USERNAME_PARAM_NAME": twitter_username_param_name,
+                    "DISCORD_WEBHOOK_URL_PARAM_NAME": discord_webhook_url_param_name,
                 },
             )
         finally:
@@ -98,6 +135,7 @@ class CommitsOrCloutStack(Stack):
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter{github_username_param_name}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter{twitter_bearer_token_param_name}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter{twitter_username_param_name}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{discord_webhook_url_param_name}",
                 ]
             )
         )

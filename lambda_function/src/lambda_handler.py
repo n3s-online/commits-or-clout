@@ -34,6 +34,7 @@ GITHUB_TOKEN_PARAM_NAME = os.environ.get("GITHUB_TOKEN_PARAM_NAME")
 GITHUB_USERNAME_PARAM_NAME = os.environ.get("GITHUB_USERNAME_PARAM_NAME")
 TWITTER_BEARER_TOKEN_PARAM_NAME = os.environ.get("TWITTER_BEARER_TOKEN_PARAM_NAME")
 TWITTER_USERNAME_PARAM_NAME = os.environ.get("TWITTER_USERNAME_PARAM_NAME")
+DISCORD_WEBHOOK_URL_PARAM_NAME = os.environ.get("DISCORD_WEBHOOK_URL_PARAM_NAME")
 S3_BUCKET = os.environ.get("S3_BUCKET")
 S3_KEY = os.environ.get("S3_KEY", "index.html")
 
@@ -42,6 +43,39 @@ GITHUB_TOKEN = get_parameter(GITHUB_TOKEN_PARAM_NAME)
 GITHUB_USERNAME = get_parameter(GITHUB_USERNAME_PARAM_NAME, False) or "your_github_username"
 TWITTER_BEARER_TOKEN = get_parameter(TWITTER_BEARER_TOKEN_PARAM_NAME)
 TWITTER_USERNAME = get_parameter(TWITTER_USERNAME_PARAM_NAME, False) or "your_twitter_username"
+DISCORD_WEBHOOK_URL = get_parameter(DISCORD_WEBHOOK_URL_PARAM_NAME)
+
+# Maximum Discord message length
+MAX_DISCORD_MESSAGE_LENGTH = 2000
+
+def send_discord_alert(message):
+    """
+    Send an alert message to Discord webhook
+    """
+    if not DISCORD_WEBHOOK_URL:
+        logger.warning("Discord webhook URL not configured, skipping alert")
+        return False
+    
+    # Truncate message if it exceeds maximum length
+    if len(message) > MAX_DISCORD_MESSAGE_LENGTH:
+        message = message[:MAX_DISCORD_MESSAGE_LENGTH - 3] + "..."
+    
+    payload = {
+        "content": message
+    }
+    
+    try:
+        response = requests.post(
+            DISCORD_WEBHOOK_URL,
+            json=payload,
+            headers={"Content-Type": "application/json"}
+        )
+        response.raise_for_status()
+        logger.info(f"Discord alert sent successfully: {message}")
+        return True
+    except Exception as e:
+        logger.error(f"Failed to send Discord alert: {e}")
+        return False
 
 def get_user_repositories(username, token):
     """
@@ -154,15 +188,20 @@ def get_commits_since_jan_1(username, token):
                 logger.info(f"Found {repo_commits} commits in repo {repo_name} since Jan 1")
                 
             except requests.exceptions.RequestException as e:
-                logger.error(f"Error fetching commits for repo {repo_name}: {e}")
-                # Continue with other repos even if one fails
-                continue
+                error_msg = f"Error fetching commits for repo {repo_name}: {e}"
+                logger.error(error_msg)
+                # Send error to Discord and exit early
+                send_discord_alert(f"❌ {error_msg}")
+                raise Exception(error_msg)
         
         logger.info(f"Found total of {total_commits} commits across all repositories since Jan 1")
         return total_commits
     except Exception as e:
-        logger.error(f"Error in get_commits_since_jan_1: {e}")
-        return 0
+        error_msg = f"Error in get_commits_since_jan_1: {e}"
+        logger.error(error_msg)
+        # Send error to Discord and exit early
+        send_discord_alert(f"❌ Error fetching commits: {error_msg}")
+        raise Exception(error_msg)
 
 def get_follower_count(username, bearer_token):
     """
@@ -187,11 +226,15 @@ def get_follower_count(username, bearer_token):
             logger.info(f"Found {followers_count} Twitter followers")
             return followers_count
         else:
-            logger.error(f"Unexpected response format: {user_data}")
-            return 0
+            error_msg = f"Unexpected response format: {user_data}"
+            logger.error(error_msg)
+            send_discord_alert(f"❌ Error fetching X followers: {error_msg}")
+            raise Exception(error_msg)
     except Exception as e:
-        logger.error(f"Error fetching follower count: {e}")
-        return 0
+        error_msg = f"Error fetching X follower count: {e}"
+        logger.error(error_msg)
+        send_discord_alert(f"❌ {error_msg}")
+        raise Exception(error_msg)
 
 def handler(event, context):
     """
@@ -216,12 +259,14 @@ def handler(event, context):
             
             error_msg = f"Missing required environment variables: {', '.join(missing_vars)}"
             logger.error(error_msg)
+            send_discord_alert(f"❌ {error_msg}")
             return {
                 'statusCode': 500,
                 'body': json.dumps({'error': error_msg})
             }
         
         # Get GitHub commits and Twitter followers
+        # These functions will now exit early and send Discord alerts if they fail
         commit_count = get_commits_since_jan_1(GITHUB_USERNAME, GITHUB_TOKEN)
         follower_count = get_follower_count(TWITTER_USERNAME, TWITTER_BEARER_TOKEN)
 
@@ -516,10 +561,12 @@ def handler(event, context):
             )
             logger.info(f"Successfully uploaded to s3://{S3_BUCKET}/{S3_KEY}")
         except Exception as e:
-            logger.error(f"Error uploading to S3: {e}")
+            error_msg = f"Error uploading to S3: {e}"
+            logger.error(error_msg)
+            send_discord_alert(f"❌ {error_msg}")
             return {
                 'statusCode': 500,
-                'body': json.dumps({'error': f"Error uploading to S3: {str(e)}"})
+                'body': json.dumps({'error': error_msg})
             }
 
         return {
@@ -532,7 +579,9 @@ def handler(event, context):
             })
         }
     except Exception as e:
-        logger.error("Error in Lambda execution: %s", str(e))
+        error_msg = f"Error in Lambda execution: {str(e)}"
+        logger.error(error_msg)
+        send_discord_alert(f"❌ {error_msg}")
         return {
             'statusCode': 500,
             'body': json.dumps({
