@@ -132,11 +132,11 @@ class CommitsOrCloutStack(Stack):
             iam.PolicyStatement(
                 actions=["ssm:GetParameter", "ssm:GetParameters"],
                 resources=[
-                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{github_token_param_name}",
-                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{github_username_param_name}",
-                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{twitter_bearer_token_param_name}",
-                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{twitter_username_param_name}",
-                    f"arn:aws:ssm:{self.region}:{self.account}:parameter{discord_webhook_url_param_name}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{github_token_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{github_username_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{twitter_bearer_token_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{twitter_username_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{discord_webhook_url_param_name.lstrip('/')}",
                 ]
             )
         )
