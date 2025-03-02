@@ -11,8 +11,16 @@ This script allows you to test the Lambda handler locally by:
 import os
 import json
 import sys
+import logging
 from pathlib import Path
 from dotenv import load_dotenv
+
+# Configure logging BEFORE importing the lambda_handler
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(name)s: %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 # Find and load the .env file BEFORE importing the lambda_handler
 current_dir = Path(__file__).parent
