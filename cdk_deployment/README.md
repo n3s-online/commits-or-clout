@@ -45,7 +45,7 @@ To deploy the Lambda function:
 1. Make sure your AWS credentials are configured
 2. Run:
    ```
-   cdk deploy
+   cdk deploy --app "python app.py"
    ```
 
 This will:
