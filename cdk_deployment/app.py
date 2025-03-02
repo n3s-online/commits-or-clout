@@ -17,6 +17,8 @@ from aws_cdk import (
     aws_cloudfront as cloudfront,
     aws_cloudfront_origins as origins,
     aws_certificatemanager as acm,
+    CfnOutput,
+    Environment,
 )
 from constructs import Construct
 
@@ -62,7 +64,6 @@ class CommitsOrCloutStack(Stack):
         )
 
         # Output the CloudFront domain name and distribution ID
-        from aws_cdk import CfnOutput
         CfnOutput(self, "CloudFrontDomainName", 
                   value=distribution.distribution_domain_name,
                   description="The domain name of the CloudFront distribution")
@@ -156,5 +157,10 @@ class CommitsOrCloutStack(Stack):
 
 
 app = App()
-CommitsOrCloutStack(app, "CommitsOrCloutStack")
+
+# Deploy everything to us-east-1
+CommitsOrCloutStack(app, "CommitsOrCloutStack", 
+                   env=Environment(account=os.environ.get("CDK_DEFAULT_ACCOUNT"), 
+                                   region="us-east-1"))
+
 app.synth() 
