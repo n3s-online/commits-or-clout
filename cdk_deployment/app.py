@@ -115,6 +115,7 @@ class CommitsOrCloutStack(Stack):
                 environment={
                     "S3_BUCKET": website_bucket.bucket_name,
                     "S3_KEY": "index.html",
+                    "S3_HISTORY_KEY": "historical_data.json",
                     "GITHUB_TOKEN_PARAM_NAME": github_token_param_name,
                     "GITHUB_USERNAME_PARAM_NAME": github_username_param_name,
                     "TWITTER_BEARER_TOKEN_PARAM_NAME": twitter_bearer_token_param_name,

@@ -14,6 +14,8 @@ logger.setLevel(logging.INFO)
 
 # SSM client for retrieving parameters
 ssm_client = boto3.client('ssm')
+# S3 client for file operations
+s3 = boto3.client('s3')
 
 def get_parameter(param_name, with_decryption=True):
     """
@@ -37,6 +39,7 @@ TWITTER_USERNAME_PARAM_NAME = os.environ.get("TWITTER_USERNAME_PARAM_NAME")
 DISCORD_WEBHOOK_URL_PARAM_NAME = os.environ.get("DISCORD_WEBHOOK_URL_PARAM_NAME")
 S3_BUCKET = os.environ.get("S3_BUCKET")
 S3_KEY = os.environ.get("S3_KEY", "index.html")
+S3_HISTORY_KEY = os.environ.get("S3_HISTORY_KEY", "historical_data.json")
 
 # Retrieve actual values from Parameter Store
 GITHUB_TOKEN = get_parameter(GITHUB_TOKEN_PARAM_NAME)
@@ -236,6 +239,76 @@ def get_follower_count(username, bearer_token):
         send_discord_alert(f"❌ {error_msg}")
         raise Exception(error_msg)
 
+def get_historical_data():
+    """
+    Fetch historical data from S3 bucket
+    """
+    try:
+        response = s3.get_object(Bucket=S3_BUCKET, Key=S3_HISTORY_KEY)
+        historical_data = json.loads(response['Body'].read().decode('utf-8'))
+        logger.info(f"Successfully retrieved historical data from S3")
+        return historical_data
+    except s3.exceptions.NoSuchKey:
+        logger.info(f"No historical data found, creating new dataset")
+        return {"data": []}
+    except Exception as e:
+        logger.error(f"Error retrieving historical data: {e}")
+        send_discord_alert(f"⚠️ Error retrieving historical data: {e}")
+        return {"data": []}
+
+def update_historical_data(historical_data, commit_count, follower_count, ratio):
+    """
+    Update historical data with current day's information
+    """
+    # Get current date in PST timezone (without time)
+    pacific_tz = pytz.timezone('America/Los_Angeles')
+    current_datetime = datetime.now(pacific_tz)
+    current_date = current_datetime.strftime("%Y-%m-%d")
+    
+    # Check if we already have an entry for today
+    today_entry = None
+    for entry in historical_data["data"]:
+        if entry.get("date") == current_date:
+            today_entry = entry
+            break
+    
+    # Update existing entry or create a new one
+    if today_entry:
+        logger.info(f"Updating existing entry for {current_date}")
+        today_entry["github_commits"] = commit_count
+        today_entry["twitter_followers"] = follower_count
+        today_entry["ratio"] = ratio
+        today_entry["last_updated"] = current_datetime.isoformat()
+    else:
+        logger.info(f"Creating new entry for {current_date}")
+        historical_data["data"].append({
+            "date": current_date,
+            "github_commits": commit_count,
+            "twitter_followers": follower_count,
+            "ratio": ratio,
+            "last_updated": current_datetime.isoformat()
+        })
+    
+    return historical_data
+
+def save_historical_data(historical_data):
+    """
+    Save historical data to S3 bucket
+    """
+    try:
+        s3.put_object(
+            Bucket=S3_BUCKET,
+            Key=S3_HISTORY_KEY,
+            Body=json.dumps(historical_data, indent=2).encode('utf-8'),
+            ContentType='application/json'
+        )
+        logger.info(f"Successfully saved historical data to S3")
+        return True
+    except Exception as e:
+        logger.error(f"Error saving historical data: {e}")
+        send_discord_alert(f"❌ Error saving historical data: {e}")
+        return False
+
 def handler(event, context):
     """
     Main Lambda handler function.
@@ -266,7 +339,6 @@ def handler(event, context):
             }
         
         # Get GitHub commits and Twitter followers
-        # These functions will now exit early and send Discord alerts if they fail
         commit_count = get_commits_since_jan_1(GITHUB_USERNAME, GITHUB_TOKEN)
         follower_count = get_follower_count(TWITTER_USERNAME, TWITTER_BEARER_TOKEN)
 
@@ -279,12 +351,15 @@ def handler(event, context):
         ratio_text_subtitle = "Focusing more on building than on social media presence!" if ratio > 1 else "I need to build more..."
         
         # Format the current date with time in PST timezone
-        # Get current time in PST/PDT (will automatically handle daylight saving)
         pacific_tz = pytz.timezone('America/Los_Angeles')
         current_datetime = datetime.now(pacific_tz)
-        # Use PST/PDT depending on daylight saving
         timezone_name = "PDT" if current_datetime.dst() else "PST"
         current_date = current_datetime.strftime("%B %d, %Y at %I:%M %p") + f" {timezone_name}"
+        
+        # Get and update historical data
+        historical_data = get_historical_data()
+        updated_historical_data = update_historical_data(historical_data, commit_count, follower_count, ratio)
+        save_historical_data(updated_historical_data)
         
         # HTML template
         html_template = """<!DOCTYPE html>
@@ -551,7 +626,6 @@ def handler(event, context):
         )
 
         # Upload to S3
-        s3 = boto3.client('s3')
         try:
             s3.put_object(
                 Bucket=S3_BUCKET, 
