@@ -41,7 +41,9 @@ TWITTER_USERNAME_PARAM_NAME = os.environ.get("TWITTER_USERNAME_PARAM_NAME")
 DISCORD_WEBHOOK_URL_PARAM_NAME = os.environ.get("DISCORD_WEBHOOK_URL_PARAM_NAME")
 S3_BUCKET = os.environ.get("S3_BUCKET")
 S3_KEY = os.environ.get("S3_KEY", "index.html")
+S3_KEY_BACKUP = os.environ.get("S3_KEY_BACKUP", "index_backup.html")
 S3_HISTORY_KEY = os.environ.get("S3_HISTORY_KEY", "historical_data.json")
+S3_HISTORY_BACKUP_KEY = os.environ.get("S3_HISTORY_BACKUP_KEY", "historical_data_backup.json")
 SSM_PARAM_NAME = os.environ.get('SSM_PARAM_NAME', '/commits-or-clout/historical-data')
 
 # Retrieve actual values from Parameter Store
@@ -252,8 +254,29 @@ def get_historical_data():
         logger.info(f"Successfully retrieved historical data from S3")
         return historical_data
     except s3.exceptions.NoSuchKey:
-        logger.info(f"No historical data found, creating new dataset")
-        return {"data": []}
+        logger.info(f"No historical data found, trying to restore from backup")
+        try:
+            # Try to restore from backup
+            response = s3.get_object(Bucket=S3_BUCKET, Key=S3_HISTORY_BACKUP_KEY)
+            historical_data = json.loads(response['Body'].read().decode('utf-8'))
+            logger.info(f"Successfully restored historical data from backup")
+            
+            # Save the restored data to the main file
+            s3.put_object(
+                Bucket=S3_BUCKET,
+                Key=S3_HISTORY_KEY,
+                Body=json.dumps(historical_data, indent=2).encode('utf-8'),
+                ContentType='application/json'
+            )
+            logger.info(f"Restored backup data to main historical data file")
+            
+            return historical_data
+        except s3.exceptions.NoSuchKey:
+            logger.info(f"No backup historical data found either, creating new dataset")
+            return {"data": []}
+        except Exception as e:
+            logger.error(f"Error restoring from backup: {e}")
+            return {"data": []}
     except Exception as e:
         logger.error(f"Error retrieving historical data: {e}")
         send_discord_alert(f"⚠️ Error retrieving historical data: {e}")
@@ -299,6 +322,25 @@ def save_historical_data(historical_data):
     Save historical data to S3 bucket
     """
     try:
+        # First, create a backup of the existing data
+        try:
+            # Check if the file exists before trying to copy it
+            s3.head_object(Bucket=S3_BUCKET, Key=S3_HISTORY_KEY)
+            
+            # Copy the existing file to a backup
+            s3.copy_object(
+                Bucket=S3_BUCKET,
+                CopySource={'Bucket': S3_BUCKET, 'Key': S3_HISTORY_KEY},
+                Key=S3_HISTORY_BACKUP_KEY
+            )
+            logger.info(f"Created backup of historical data at s3://{S3_BUCKET}/{S3_HISTORY_BACKUP_KEY}")
+        except s3.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                logger.info(f"No existing historical data file to backup")
+            else:
+                logger.warning(f"Error creating backup of historical data: {e}")
+        
+        # Now save the new data
         s3.put_object(
             Bucket=S3_BUCKET,
             Key=S3_HISTORY_KEY,
@@ -364,6 +406,24 @@ def handler(event, context):
 
         # Upload to S3
         try:
+            # First, create a backup of the existing index.html
+            try:
+                # Check if the file exists before trying to copy it
+                s3.head_object(Bucket=S3_BUCKET, Key=S3_KEY)
+                
+                # Copy the existing file to a backup
+                s3.copy_object(
+                    Bucket=S3_BUCKET,
+                    CopySource={'Bucket': S3_BUCKET, 'Key': S3_KEY},
+                    Key=S3_KEY_BACKUP
+                )
+                logger.info(f"Created backup of index.html at s3://{S3_BUCKET}/{S3_KEY_BACKUP}")
+            except s3.exceptions.ClientError as e:
+                if e.response['Error']['Code'] == '404':
+                    logger.info(f"No existing index.html file to backup")
+                else:
+                    logger.warning(f"Error creating backup of index.html: {e}")
+            
             # Upload HTML file
             s3.put_object(
                 Bucket=S3_BUCKET, 

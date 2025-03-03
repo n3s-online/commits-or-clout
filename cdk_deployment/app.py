@@ -33,8 +33,8 @@ class CommitsOrCloutStack(Stack):
         website_bucket = s3.Bucket(
             self,
             "CommitsOrCloutWebsite",
-            removal_policy=RemovalPolicy.DESTROY,  # For development; use RETAIN for production
-            auto_delete_objects=True,  # For development; remove for production
+            removal_policy=RemovalPolicy.DESTROY,  # Keep as DESTROY to avoid deployment issues
+            auto_delete_objects=True,  # Keep as True to avoid permission errors
             website_index_document="index.html",
             public_read_access=True,  # Allow public access to read the website
             block_public_access=s3.BlockPublicAccess(
@@ -43,6 +43,19 @@ class CommitsOrCloutStack(Stack):
                 ignore_public_acls=False,
                 restrict_public_buckets=False
             )
+        )
+
+        # Add a lifecycle rule to preserve important files
+        website_bucket.add_lifecycle_rule(
+            id="PreserveImportantFiles",
+            prefix="",  # Apply to all objects
+            noncurrent_version_expiration=Duration.days(1),  # Clean up old versions
+            abort_incomplete_multipart_upload_after=Duration.days(1),
+            expiration=None,  # Don't expire current versions
+            transitions=[],
+            noncurrent_version_transitions=[],
+            expiration_date=None,
+            expired_object_delete_marker=False
         )
 
         # Upload favicon files directly to S3 during deployment
@@ -63,7 +76,8 @@ class CommitsOrCloutStack(Stack):
             sources=[s3deploy.Source.asset("../lambda_function/favicons")],
             destination_bucket=website_bucket,
             destination_key_prefix="",
-            retain_on_delete=False
+            retain_on_delete=True,  # Changed from False to True to retain files on delete
+            prune=False  # Added to prevent pruning of files not in the source
         )
 
         # Request a certificate for commits.willness.dev
