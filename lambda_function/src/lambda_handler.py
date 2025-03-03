@@ -590,7 +590,7 @@ def handler(event, context):
         </div>
 
         <div class="footer">
-            <p>Created with ❤️ by</p>
+            <p>Created with ❤️ by <a href="https://willness.dev" target="_blank">willness.dev</a></p>
             <div class="social-links">
                 <a href="https://github.com/{{ github_username }}" target="_blank">
                     <svg height="16" width="16" viewBox="0 0 16 16" fill="currentColor">
