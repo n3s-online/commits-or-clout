@@ -557,7 +557,8 @@ def handler(event, context):
                 Bucket=S3_BUCKET, 
                 Key=S3_KEY, 
                 Body=html_content.encode('utf-8'), 
-                ContentType='text/html'
+                ContentType='text/html',
+                CacheControl='max-age=1800'  # 30 minutes in seconds, matching the Lambda schedule
             )
             logger.info(f"Successfully uploaded to s3://{S3_BUCKET}/{S3_KEY}")
         except Exception as e:
