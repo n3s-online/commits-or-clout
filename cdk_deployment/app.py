@@ -1,24 +1,27 @@
 #!/usr/bin/env python3
 import os
-import subprocess
-import shutil
 import tempfile
+import shutil
+import subprocess
 from aws_cdk import (
     App,
     Stack,
-    Duration,
-    RemovalPolicy,
+    aws_s3 as s3,
     aws_lambda as _lambda,
     aws_events as events,
     aws_events_targets as targets,
-    aws_s3 as s3,
-    aws_ssm as ssm,
-    aws_iam as iam,
     aws_cloudfront as cloudfront,
     aws_cloudfront_origins as origins,
+    aws_route53 as route53,
+    aws_route53_targets as route53_targets,
     aws_certificatemanager as acm,
+    aws_s3_deployment as s3deploy,
+    aws_ssm as ssm,
+    aws_iam as iam,
+    Duration,
+    RemovalPolicy,
     CfnOutput,
-    Environment,
+    Environment
 )
 from constructs import Construct
 
@@ -40,6 +43,27 @@ class CommitsOrCloutStack(Stack):
                 ignore_public_acls=False,
                 restrict_public_buckets=False
             )
+        )
+
+        # Upload favicon files directly to S3 during deployment
+        favicon_files = [
+            {"source": "../lambda_function/favicons/favicon.ico", "target": "favicon.ico", "content_type": "image/x-icon"},
+            {"source": "../lambda_function/favicons/favicon.svg", "target": "favicon.svg", "content_type": "image/svg+xml"},
+            {"source": "../lambda_function/favicons/apple-touch-icon.png", "target": "apple-touch-icon.png", "content_type": "image/png"},
+            {"source": "../lambda_function/favicons/favicon-96x96.png", "target": "favicon-96x96.png", "content_type": "image/png"},
+            {"source": "../lambda_function/favicons/web-app-manifest-192x192.png", "target": "web-app-manifest-192x192.png", "content_type": "image/png"},
+            {"source": "../lambda_function/favicons/web-app-manifest-512x512.png", "target": "web-app-manifest-512x512.png", "content_type": "image/png"},
+            {"source": "../lambda_function/favicons/site.webmanifest", "target": "site.webmanifest", "content_type": "application/json"}
+        ]
+        
+        # Deploy all favicon files at once
+        s3deploy.BucketDeployment(
+            self,
+            "DeployFavicons",
+            sources=[s3deploy.Source.asset("../lambda_function/favicons")],
+            destination_bucket=website_bucket,
+            destination_key_prefix="",
+            retain_on_delete=False
         )
 
         # Request a certificate for commits.willness.dev

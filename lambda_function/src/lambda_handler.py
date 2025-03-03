@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from jinja2 import Environment, FileSystemLoader, Template
 import pytz
 from utils import get_html_template, render_html_template  # Import the utility functions
+from botocore.exceptions import ClientError
 
 # Configure logging
 logger = logging.getLogger()
@@ -41,13 +42,14 @@ DISCORD_WEBHOOK_URL_PARAM_NAME = os.environ.get("DISCORD_WEBHOOK_URL_PARAM_NAME"
 S3_BUCKET = os.environ.get("S3_BUCKET")
 S3_KEY = os.environ.get("S3_KEY", "index.html")
 S3_HISTORY_KEY = os.environ.get("S3_HISTORY_KEY", "historical_data.json")
+SSM_PARAM_NAME = os.environ.get('SSM_PARAM_NAME', '/commits-or-clout/historical-data')
 
 # Retrieve actual values from Parameter Store
 GITHUB_TOKEN = get_parameter(GITHUB_TOKEN_PARAM_NAME)
-GITHUB_USERNAME = get_parameter(GITHUB_USERNAME_PARAM_NAME, False) or "your_github_username"
+GITHUB_USERNAME = get_parameter(GITHUB_USERNAME_PARAM_NAME, False) or GITHUB_USERNAME
+TWITTER_USERNAME = get_parameter(TWITTER_USERNAME_PARAM_NAME, False) or TWITTER_USERNAME
 TWITTER_BEARER_TOKEN = get_parameter(TWITTER_BEARER_TOKEN_PARAM_NAME)
-TWITTER_USERNAME = get_parameter(TWITTER_USERNAME_PARAM_NAME, False) or "your_twitter_username"
-DISCORD_WEBHOOK_URL = get_parameter(DISCORD_WEBHOOK_URL_PARAM_NAME)
+DISCORD_WEBHOOK_URL = get_parameter(DISCORD_WEBHOOK_URL_PARAM_NAME, False)
 
 # Maximum Discord message length
 MAX_DISCORD_MESSAGE_LENGTH = 2000
@@ -362,6 +364,7 @@ def handler(event, context):
 
         # Upload to S3
         try:
+            # Upload HTML file
             s3.put_object(
                 Bucket=S3_BUCKET, 
                 Key=S3_KEY, 
