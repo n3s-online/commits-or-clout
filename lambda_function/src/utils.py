@@ -18,6 +18,8 @@ def get_html_template():
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Commits or Clout</title>
+    <!-- Add Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --bg-color: #0d1117;
@@ -149,6 +151,22 @@ def get_html_template():
             background-clip: text;
         }
 
+        /* Chart container styles */
+        .chart-container {
+            background-color: var(--card-bg);
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-title {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+
         .footer {
             text-align: center;
             margin-top: 40px;
@@ -239,6 +257,12 @@ def get_html_template():
             <p>{{ ratio_text_subtitle }}</p>
         </div>
 
+        <!-- Chart container -->
+        <div class="chart-container">
+            <h2 class="chart-title">Historical Data</h2>
+            <canvas id="historyChart"></canvas>
+        </div>
+
         <div class="footer">
             <p>Created with ❤️ by <a href="https://willness.dev" target="_blank">willness.dev</a></p>
             <div class="social-links">
@@ -258,10 +282,85 @@ def get_html_template():
             <p class="last-updated">Last updated: <span id="last-updated">{{ last_updated }}</span></p>
         </div>
     </div>
+
+    <!-- Chart.js initialization script -->
+    <script>
+        // Parse the historical data from the template
+        const historicalData = {{ historical_data_json|safe }};
+        
+        // Extract dates and values for the chart
+        const dates = historicalData.data.map(entry => entry.date);
+        const commits = historicalData.data.map(entry => entry.github_commits);
+        const followers = historicalData.data.map(entry => entry.twitter_followers);
+        
+        // Create the chart
+        const ctx = document.getElementById('historyChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [
+                    {
+                        label: 'GitHub Commits',
+                        data: commits,
+                        borderColor: '#238636',
+                        backgroundColor: 'rgba(35, 134, 54, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        pointBackgroundColor: '#238636'
+                    },
+                    {
+                        label: 'X/Twitter Followers',
+                        data: followers,
+                        borderColor: '#1d9bf0',
+                        backgroundColor: 'rgba(29, 155, 240, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        pointBackgroundColor: '#1d9bf0'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: '#f0f6fc'
+                        }
+                    },
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                },
+                scales: {
+                    x: {
+                        ticks: {
+                            color: '#8b949e'
+                        },
+                        grid: {
+                            color: 'rgba(48, 54, 61, 0.5)'
+                        }
+                    },
+                    y: {
+                        ticks: {
+                            color: '#8b949e'
+                        },
+                        grid: {
+                            color: 'rgba(48, 54, 61, 0.5)'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>"""
 
-def render_html_template(commit_count, follower_count, github_username, twitter_username):
+def render_html_template(commit_count, follower_count, github_username, twitter_username, historical_data=None):
     """
     Render the HTML template with the provided data
     
@@ -270,6 +369,7 @@ def render_html_template(commit_count, follower_count, github_username, twitter_
         follower_count (int): Number of Twitter followers
         github_username (str): GitHub username
         twitter_username (str): Twitter username
+        historical_data (dict, optional): Historical data for the chart
         
     Returns:
         str: Rendered HTML content
@@ -288,6 +388,13 @@ def render_html_template(commit_count, follower_count, github_username, twitter_
     timezone_name = "PDT" if current_datetime.dst() else "PST"
     current_date = current_datetime.strftime("%B %d, %Y at %I:%M %p") + f" {timezone_name}"
     
+    # If no historical data is provided, create a minimal structure
+    if historical_data is None:
+        historical_data = {"data": []}
+    
+    # Convert historical data to JSON for the template
+    historical_data_json = json.dumps(historical_data)
+    
     # Create a Jinja2 template from the HTML string
     template = Template(get_html_template())
 
@@ -299,7 +406,8 @@ def render_html_template(commit_count, follower_count, github_username, twitter_
         ratio_text_subtitle=ratio_text_subtitle,
         github_username=github_username,
         twitter_username=twitter_username,
-        last_updated=current_date
+        last_updated=current_date,
+        historical_data_json=historical_data_json
     )
     
     return html_content 

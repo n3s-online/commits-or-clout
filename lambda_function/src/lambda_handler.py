@@ -351,12 +351,13 @@ def handler(event, context):
         updated_historical_data = update_historical_data(historical_data, commit_count, follower_count, ratio)
         save_historical_data(updated_historical_data)
         
-        # Use the render_html_template function from utils.py
+        # Use the render_html_template function from utils.py with historical data
         html_content = render_html_template(
             commit_count, 
             follower_count, 
             GITHUB_USERNAME, 
-            TWITTER_USERNAME
+            TWITTER_USERNAME,
+            updated_historical_data  # Pass the historical data to the template
         )
 
         # Upload to S3
