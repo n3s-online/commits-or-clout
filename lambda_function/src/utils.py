@@ -51,6 +51,40 @@ def get_html_template():
             color: var(--text-primary);
             line-height: 1.6;
             padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated gradient background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(
+                    circle at 20% 30%, 
+                    rgba(35, 134, 54, 0.03) 0%, 
+                    transparent 50%
+                ),
+                radial-gradient(
+                    circle at 80% 70%, 
+                    rgba(29, 155, 240, 0.03) 0%, 
+                    transparent 50%
+                );
+            z-index: -2;
+            animation: gradientShift 15s ease infinite alternate;
+        }
+
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 0%;
+            }
+            100% {
+                background-position: 100% 100%;
+            }
         }
 
         .container {
@@ -62,6 +96,125 @@ def get_html_template():
         header {
             text-align: center;
             margin-bottom: 40px;
+            position: relative;
+        }
+
+        /* Particles around logo */
+        .particles-container {
+            position: absolute;
+            top: -80px;
+            right: -80px;
+            width: 160px;
+            height: 160px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background-color: var(--accent-github);
+            opacity: 0;
+            animation: particle-animation 3s ease-in-out infinite;
+        }
+
+        .particle:nth-child(even) {
+            background-color: var(--accent-twitter);
+        }
+
+        .particle:nth-child(1) { top: 20%; left: 30%; animation-delay: 0s; }
+        .particle:nth-child(2) { top: 70%; left: 60%; animation-delay: 0.3s; }
+        .particle:nth-child(3) { top: 40%; left: 80%; animation-delay: 0.6s; }
+        .particle:nth-child(4) { top: 60%; left: 20%; animation-delay: 0.9s; }
+        .particle:nth-child(5) { top: 30%; left: 50%; animation-delay: 1.2s; }
+        .particle:nth-child(6) { top: 80%; left: 40%; animation-delay: 1.5s; }
+        .particle:nth-child(7) { top: 50%; left: 70%; animation-delay: 1.8s; }
+        .particle:nth-child(8) { top: 10%; left: 60%; animation-delay: 2.1s; }
+
+        @keyframes particle-animation {
+            0% {
+                transform: scale(0) translate(0, 0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1) translate(10px, 10px);
+            }
+            100% {
+                transform: scale(0) translate(20px, 20px);
+                opacity: 0;
+            }
+        }
+
+        /* Floating logo animation */
+        .floating-logo {
+            position: absolute;
+            top: -60px;
+            right: -60px;
+            width: 120px;
+            height: 120px;
+            opacity: 0.7;
+            animation: float 6s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        .floating-logo img {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-15px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Glowing effect for the logo */
+        .logo-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                circle at center,
+                rgba(35, 134, 54, 0.3) 0%,
+                rgba(29, 155, 240, 0.3) 50%,
+                transparent 70%
+            );
+            filter: blur(15px);
+            opacity: 0.5;
+            animation: pulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.3;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
         }
 
         h1 {
@@ -71,6 +224,8 @@ def get_html_template():
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            position: relative;
+            z-index: 1;
         }
 
         .subtitle {
@@ -231,6 +386,24 @@ def get_html_template():
 <body>
     <div class="container">
         <header>
+            <!-- Particles around logo -->
+            <div class="particles-container">
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+                <div class="particle"></div>
+            </div>
+            
+            <!-- Floating animated logo -->
+            <div class="floating-logo">
+                <div class="logo-glow"></div>
+                <img src="/favicon.svg" alt="Commits or Clout Logo">
+            </div>
+            
             <h1>Commits or Clout</h1>
             <p class="subtitle">Tracking my GitHub activity vs. X/Twitter following</p>
         </header>
