@@ -517,6 +517,16 @@ def get_html_template():
         const youtubeSubscribers = historicalData.data.map(entry => entry.youtube_subscribers || 0);
         const totalFollowers = historicalData.data.map(entry => entry.total_followers || entry.twitter_followers);
         
+        // Function to determine point radius based on dataset size
+        const getPointRadius = (dataLength) => {
+            if (dataLength > 100) return 0;  // Hide points for large datasets
+            if (dataLength > 60) return 1;   // Very small points for medium-large datasets
+            return 2;                        // Default size for smaller datasets
+        };
+        
+        // Set point radius based on dataset size
+        const pointRadius = getPointRadius(dates.length);
+        
         // Create the chart
         const ctx = document.getElementById('historyChart').getContext('2d');
         const chart = new Chart(ctx, {
@@ -531,7 +541,9 @@ def get_html_template():
                         backgroundColor: 'rgba(35, 134, 54, 0.1)',
                         borderWidth: 2,
                         tension: 0.1,
-                        pointBackgroundColor: '#238636'
+                        pointBackgroundColor: '#238636',
+                        pointRadius: pointRadius,
+                        pointHoverRadius: 4
                     },
                     {
                         label: 'Total Followers',
@@ -540,7 +552,9 @@ def get_html_template():
                         backgroundColor: 'rgba(156, 39, 176, 0.1)',
                         borderWidth: 2,
                         tension: 0.1,
-                        pointBackgroundColor: '#9c27b0'
+                        pointBackgroundColor: '#9c27b0',
+                        pointRadius: pointRadius,
+                        pointHoverRadius: 4
                     },
                     {
                         label: 'X/Twitter Followers',
@@ -549,7 +563,9 @@ def get_html_template():
                         backgroundColor: 'rgba(29, 155, 240, 0.1)',
                         borderWidth: 2,
                         tension: 0.1,
-                        pointBackgroundColor: '#1d9bf0'
+                        pointBackgroundColor: '#1d9bf0',
+                        pointRadius: pointRadius,
+                        pointHoverRadius: 4
                     },
                     {
                         label: 'YouTube Subscribers',
@@ -558,13 +574,25 @@ def get_html_template():
                         backgroundColor: 'rgba(255, 0, 0, 0.1)',
                         borderWidth: 2,
                         tension: 0.1,
-                        pointBackgroundColor: '#FF0000'
+                        pointBackgroundColor: '#FF0000',
+                        pointRadius: pointRadius,
+                        pointHoverRadius: 4
                     }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: true,
+                elements: {
+                    point: {
+                        radius: 2,
+                        hoverRadius: 4,
+                        hitRadius: 6
+                    },
+                    line: {
+                        borderWidth: 2
+                    }
+                },
                 plugins: {
                     legend: {
                         position: 'top',
@@ -575,6 +603,10 @@ def get_html_template():
                     tooltip: {
                         mode: 'index',
                         intersect: false
+                    },
+                    decimation: {
+                        enabled: true,
+                        algorithm: 'min-max'
                     }
                 },
                 scales: {
