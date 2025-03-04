@@ -385,6 +385,13 @@ def get_html_template():
             .chart-container {
                 display: none;
             }
+            
+            /* Make social links display in a column on mobile */
+            .social-links {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
         }
     </style>
 </head>
