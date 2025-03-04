@@ -464,7 +464,8 @@ def handler(event, context):
             follower_count, 
             GITHUB_USERNAME, 
             TWITTER_USERNAME,
-            updated_historical_data  # Pass the historical data to the template
+            updated_historical_data,  # Pass the historical data to the template
+            YOUTUBE_CHANNEL_ID  # Pass the YouTube channel ID
         )
 
         # Upload to S3

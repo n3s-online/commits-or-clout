@@ -405,7 +405,7 @@ def get_html_template():
             </div>
             
             <h1>Commits or Clout</h1>
-            <p class="subtitle">Tracking my GitHub activity vs. X/Twitter following</p>
+            <p class="subtitle">Tracking my GitHub activity vs. social media following</p>
         </header>
 
         <div class="stats-container">
@@ -426,17 +426,17 @@ def get_html_template():
 
             <div class="stat-card twitter-card">
                 <div class="stat-title">
-                    <a href="https://twitter.com/{{ twitter_username }}" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+                    <a href="https://willness.dev?tab=socials" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
                         <svg height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                            <path d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.19 19.2,15.8 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
                         </svg>
-                        X/Twitter Followers
+                        Total Followers
                     </a>
                 </div>
-                <a href="https://twitter.com/{{ twitter_username }}" target="_blank" style="text-decoration: none;">
-                    <div class="stat-value">{{ twitter_followers }}</div>
+                <a href="https://willness.dev?tab=socials" target="_blank" style="text-decoration: none;">
+                    <div class="stat-value">{{ total_followers }}</div>
                 </a>
-                <div class="stat-description">Current follower count</div>
+                <div class="stat-description">Combined social media followers</div>
             </div>
         </div>
 
@@ -450,6 +450,39 @@ def get_html_template():
         <div class="chart-container">
             <h2 class="chart-title">Historical Data</h2>
             <canvas id="historyChart"></canvas>
+        </div>
+
+        <!-- Social Media Breakdown -->
+        <div class="stats-container">
+            <div class="stat-card twitter-card">
+                <div class="stat-title">
+                    <a href="https://twitter.com/{{ twitter_username }}" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+                        <svg height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"></path>
+                        </svg>
+                        X/Twitter Followers
+                    </a>
+                </div>
+                <a href="https://twitter.com/{{ twitter_username }}" target="_blank" style="text-decoration: none;">
+                    <div class="stat-value">{{ twitter_followers }}</div>
+                </a>
+                <div class="stat-description">Current X/Twitter follower count</div>
+            </div>
+
+            <div class="stat-card" style="border-top: 4px solid #FF0000;">
+                <div class="stat-title">
+                    <a href="https://www.youtube.com/channel/{{ youtube_channel_id }}" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+                        <svg height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M10,15L15.19,12L10,9V15M21.56,7.17C21.69,7.64 21.78,8.27 21.84,9.07C21.91,9.87 21.94,10.56 21.94,11.16L22,12C22,14.19 21.84,15.8 21.56,16.83C21.31,17.73 20.73,18.31 19.83,18.56C19.36,18.69 18.5,18.78 17.18,18.84C15.88,18.91 14.69,18.94 13.59,18.94L12,19C7.81,19 5.2,18.84 4.17,18.56C3.27,18.31 2.69,17.73 2.44,16.83C2.31,16.36 2.22,15.73 2.16,14.93C2.09,14.13 2.06,13.44 2.06,12.84L2,12C2,9.81 2.16,8.2 2.44,7.17C2.69,6.27 3.27,5.69 4.17,5.44C4.64,5.31 5.5,5.22 6.82,5.16C8.12,5.09 9.31,5.06 10.41,5.06L12,5C16.19,5 18.8,5.16 19.83,5.44C20.73,5.69 21.31,6.27 21.56,7.17Z" />
+                        </svg>
+                        YouTube Subscribers
+                    </a>
+                </div>
+                <a href="https://www.youtube.com/channel/{{ youtube_channel_id }}" target="_blank" style="text-decoration: none;">
+                    <div class="stat-value" style="color: #FF0000;">{{ youtube_subscribers }}</div>
+                </a>
+                <div class="stat-description">Current YouTube subscriber count</div>
+            </div>
         </div>
 
         <div class="footer">
@@ -481,6 +514,8 @@ def get_html_template():
         const dates = historicalData.data.map(entry => entry.date);
         const commits = historicalData.data.map(entry => entry.github_commits);
         const followers = historicalData.data.map(entry => entry.twitter_followers);
+        const youtubeSubscribers = historicalData.data.map(entry => entry.youtube_subscribers || 0);
+        const totalFollowers = historicalData.data.map(entry => entry.total_followers || entry.twitter_followers);
         
         // Create the chart
         const ctx = document.getElementById('historyChart').getContext('2d');
@@ -499,6 +534,15 @@ def get_html_template():
                         pointBackgroundColor: '#238636'
                     },
                     {
+                        label: 'Total Followers',
+                        data: totalFollowers,
+                        borderColor: '#9c27b0',
+                        backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        pointBackgroundColor: '#9c27b0'
+                    },
+                    {
                         label: 'X/Twitter Followers',
                         data: followers,
                         borderColor: '#1d9bf0',
@@ -506,6 +550,15 @@ def get_html_template():
                         borderWidth: 2,
                         tension: 0.1,
                         pointBackgroundColor: '#1d9bf0'
+                    },
+                    {
+                        label: 'YouTube Subscribers',
+                        data: youtubeSubscribers,
+                        borderColor: '#FF0000',
+                        backgroundColor: 'rgba(255, 0, 0, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        pointBackgroundColor: '#FF0000'
                     }
                 ]
             },
@@ -549,7 +602,7 @@ def get_html_template():
 </body>
 </html>"""
 
-def render_html_template(commit_count, follower_count, github_username, twitter_username, historical_data=None):
+def render_html_template(commit_count, follower_count, github_username, twitter_username, historical_data=None, youtube_channel_id=None):
     """
     Render the HTML template with the provided data
     
@@ -559,12 +612,22 @@ def render_html_template(commit_count, follower_count, github_username, twitter_
         github_username (str): GitHub username
         twitter_username (str): Twitter username
         historical_data (dict, optional): Historical data for the chart
+        youtube_channel_id (str, optional): YouTube channel ID for linking to the channel
         
     Returns:
         str: Rendered HTML content
     """
-    # Calculate the ratio (rounded to 1 decimal place)
-    ratio = round((commit_count / follower_count if follower_count > 0 else 1) * 10) / 10
+    # Get YouTube subscribers and total followers from historical data
+    youtube_subscribers = 0
+    total_followers = follower_count
+    
+    if historical_data and "data" in historical_data and historical_data["data"]:
+        latest_entry = historical_data["data"][-1]
+        youtube_subscribers = latest_entry.get("youtube_subscribers", 0)
+        total_followers = latest_entry.get("total_followers", follower_count)
+    
+    # Calculate ratio based on total followers
+    ratio = round((commit_count / total_followers if total_followers > 0 else 1) * 10) / 10
     current_year = datetime.now().year
     ratio_text = f"I have {ratio}x as many commits in {current_year} as followers"
 
@@ -591,10 +654,13 @@ def render_html_template(commit_count, follower_count, github_username, twitter_
     html_content = template.render(
         github_commits=commit_count,
         twitter_followers=follower_count,
+        youtube_subscribers=youtube_subscribers,
+        total_followers=total_followers,
         ratio_text=ratio_text,
         ratio_text_subtitle=ratio_text_subtitle,
         github_username=github_username,
         twitter_username=twitter_username,
+        youtube_channel_id=youtube_channel_id or "",
         last_updated=current_date,
         historical_data_json=historical_data_json
     )
