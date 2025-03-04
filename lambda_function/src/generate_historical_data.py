@@ -2,9 +2,11 @@ import os
 import json
 import logging
 import requests
+import boto3
 from datetime import datetime, timedelta
 import pytz
 from dotenv import load_dotenv
+from youtube_utils import get_youtube_subscriber_count
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -17,9 +19,21 @@ load_dotenv()
 GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
 
+# YouTube API configuration
+YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
+YOUTUBE_CHANNEL_ID = os.getenv("YOUTUBE_CHANNEL_ID")
+
+# S3 configuration
+S3_BUCKET = os.getenv("S3_BUCKET")
+S3_HISTORY_KEY = os.getenv("S3_HISTORY_KEY", "historical_data.json")
+S3_HISTORY_BACKUP_KEY = os.getenv("S3_HISTORY_BACKUP_KEY", "historical_data_backup.json")
+
 # Constants
 TWITTER_FOLLOWERS = 35  # Fixed number of Twitter followers
 OUTPUT_FILE = "historical_data.json"
+
+# Initialize S3 client
+s3 = boto3.client('s3')
 
 def get_user_repositories(username, token):
     """
@@ -141,9 +155,81 @@ def get_daily_commits(username, token, start_date, end_date):
     
     return daily_commits
 
+def get_historical_data_from_s3():
+    """
+    Fetch historical data from S3 bucket
+    """
+    try:
+        logger.info(f"Fetching historical data from S3: {S3_BUCKET}/{S3_HISTORY_KEY}")
+        response = s3.get_object(Bucket=S3_BUCKET, Key=S3_HISTORY_KEY)
+        historical_data = json.loads(response['Body'].read().decode('utf-8'))
+        logger.info(f"Successfully retrieved historical data from S3")
+        return historical_data
+    except s3.exceptions.NoSuchKey:
+        logger.info(f"No historical data found in S3, trying to restore from backup")
+        logger.info(f"Fetching backup historical data from S3: {S3_BUCKET}/{S3_HISTORY_BACKUP_KEY}")
+        try:
+            # Try to restore from backup
+            response = s3.get_object(Bucket=S3_BUCKET, Key=S3_HISTORY_BACKUP_KEY)
+            historical_data = json.loads(response['Body'].read().decode('utf-8'))
+            logger.info(f"Successfully restored historical data from backup")
+            return historical_data
+        except s3.exceptions.NoSuchKey:
+            logger.info(f"No backup historical data found either, creating new dataset")
+            raise Exception("No historical data found in S3")
+        except Exception as e:
+            logger.error(f"Error restoring from backup: {e}")
+            raise e;
+    except Exception as e:
+        logger.error(f"Error retrieving historical data from S3: {e}")
+        raise e;
+
+def save_historical_data_to_s3(historical_data):
+    """
+    Save historical data to S3 bucket
+    """
+    try:
+        # First, create a backup of the existing data
+        try:
+            # Check if the file exists before trying to copy it
+            s3.head_object(Bucket=S3_BUCKET, Key=S3_HISTORY_KEY)
+            
+            # Copy the existing file to a backup
+            s3.copy_object(
+                Bucket=S3_BUCKET,
+                CopySource={'Bucket': S3_BUCKET, 'Key': S3_HISTORY_KEY},
+                Key=S3_HISTORY_BACKUP_KEY
+            )
+            logger.info(f"Created backup of historical data at s3://{S3_BUCKET}/{S3_HISTORY_BACKUP_KEY}")
+        except s3.exceptions.ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                logger.info(f"No existing historical data file to backup")
+            else:
+                logger.warning(f"Error creating backup of historical data: {e}")
+        
+        # Now save the new data
+        s3.put_object(
+            Bucket=S3_BUCKET,
+            Key=S3_HISTORY_KEY,
+            Body=json.dumps(historical_data, indent=2).encode('utf-8'),
+            ContentType='application/json'
+        )
+        logger.info(f"Successfully saved historical data to S3")
+        
+        # Also save locally for reference
+        with open(OUTPUT_FILE, 'w') as f:
+            json.dump(historical_data, indent=2, fp=f)
+        logger.info(f"Historical data saved locally to {OUTPUT_FILE}")
+        
+        return True
+    except Exception as e:
+        logger.error(f"Error saving historical data to S3: {e}")
+        return False
+
 def generate_historical_data():
     """
     Generate historical data from January 1st to today with cumulative commit counts.
+    Uses existing data from S3 as the source of truth and updates it.
     """
     # Use Pacific timezone for all date operations
     pacific_tz = pytz.timezone('America/Los_Angeles')
@@ -159,8 +245,27 @@ def generate_historical_data():
     # Get daily commit counts
     daily_commits = get_daily_commits(GITHUB_USERNAME, GITHUB_TOKEN, start_date, end_date)
     
+    # Get YouTube subscriber count (current value)
+    current_youtube_subscribers = 0
+    try:
+        current_youtube_subscribers = get_youtube_subscriber_count(YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID) or 0
+        logger.info(f"Current YouTube subscribers: {current_youtube_subscribers}")
+    except Exception as e:
+        logger.error(f"Error fetching YouTube subscribers: {e}")
+    
+    # Get current Twitter followers (fixed value for this script)
+    current_twitter_followers = TWITTER_FOLLOWERS
+    
+    # Get existing historical data from S3
+    historical_data = get_historical_data_from_s3()
+    
+    # Create a dictionary of existing entries by date for easy lookup
+    existing_entries = {}
+    for entry in historical_data.get("data", []):
+        existing_entries[entry.get("date")] = entry
+    
     # Calculate cumulative commits for each day
-    historical_data = {"data": []}
+    updated_historical_data = {"data": []}
     cumulative_commits = 0
     
     # Sort dates to ensure chronological order
@@ -172,32 +277,58 @@ def generate_historical_data():
         # Get current time in Pacific timezone for last_updated
         current_pacific_time = datetime.now(pacific_tz)
         
-        # Create entry for this date
+        # Check if we have existing data for this date
+        if date_str in existing_entries:
+            existing_entry = existing_entries[date_str]
+            
+            # Use existing follower counts if available, otherwise use current values
+            twitter_followers = existing_entry.get("twitter_followers", current_twitter_followers)
+            youtube_subscribers = existing_entry.get("youtube_subscribers", current_youtube_subscribers)
+            
+            # Always update GitHub commits
+            github_commits = cumulative_commits
+        else:
+            # No existing data, use current values
+            twitter_followers = current_twitter_followers
+            youtube_subscribers = current_youtube_subscribers
+            github_commits = cumulative_commits
+        
+        # Always recalculate total_followers and ratio
+        total_followers = max(twitter_followers + youtube_subscribers, 1)  # Ensure we don't divide by zero
+        ratio = round((github_commits / total_followers) * 10) / 10
+        
+        # Create or update entry for this date
         entry = {
             "date": date_str,
-            "github_commits": cumulative_commits,
-            "twitter_followers": TWITTER_FOLLOWERS,
-            "ratio": round((cumulative_commits / TWITTER_FOLLOWERS) * 10) / 10,
+            "github_commits": github_commits,
+            "twitter_followers": twitter_followers,
+            "youtube_subscribers": youtube_subscribers,
+            "total_followers": total_followers,
+            "ratio": ratio,
             "last_updated": current_pacific_time.isoformat()
         }
         
-        historical_data["data"].append(entry)
+        updated_historical_data["data"].append(entry)
     
-    # Save to file
-    with open(OUTPUT_FILE, 'w') as f:
-        json.dump(historical_data, indent=2, fp=f)
+    # Save updated data to S3
+    save_historical_data_to_s3(updated_historical_data)
     
-    logger.info(f"Historical data saved to {OUTPUT_FILE}")
-    logger.info(f"Generated {len(historical_data['data'])} daily entries")
+    logger.info(f"Generated/updated {len(updated_historical_data['data'])} daily entries")
     logger.info(f"Data ranges from {sorted_dates[0]} to {sorted_dates[-1]}")
     
-    return historical_data
+    return updated_historical_data
 
 if __name__ == "__main__":
     if not GITHUB_TOKEN or not GITHUB_USERNAME:
         logger.error("GitHub token or username not found in environment variables")
         print("Please set GITHUB_TOKEN and GITHUB_USERNAME environment variables")
         print("You can create a .env file with these values")
+        exit(1)
+    
+    if not S3_BUCKET:
+        logger.error("S3_BUCKET not found in environment variables")
+        print("Please set S3_BUCKET environment variable")
+        print("You can create a .env file with this value")
         exit(1)
     
     logger.info(f"Generating historical data for GitHub user: {GITHUB_USERNAME}")

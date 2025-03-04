@@ -8,6 +8,7 @@ from datetime import datetime, timezone
 from jinja2 import Environment, FileSystemLoader, Template
 import pytz
 from utils import get_html_template, render_html_template  # Import the utility functions
+from youtube_utils import get_youtube_subscriber_count  # Import the YouTube utility function
 from botocore.exceptions import ClientError
 
 # Configure logging
@@ -39,6 +40,8 @@ GITHUB_USERNAME_PARAM_NAME = os.environ.get("GITHUB_USERNAME_PARAM_NAME")
 TWITTER_BEARER_TOKEN_PARAM_NAME = os.environ.get("TWITTER_BEARER_TOKEN_PARAM_NAME")
 TWITTER_USERNAME_PARAM_NAME = os.environ.get("TWITTER_USERNAME_PARAM_NAME")
 DISCORD_WEBHOOK_URL_PARAM_NAME = os.environ.get("DISCORD_WEBHOOK_URL_PARAM_NAME")
+YOUTUBE_API_KEY_PARAM_NAME = os.environ.get("YOUTUBE_API_KEY_PARAM_NAME")
+YOUTUBE_CHANNEL_ID_PARAM_NAME = os.environ.get("YOUTUBE_CHANNEL_ID_PARAM_NAME")
 S3_BUCKET = os.environ.get("S3_BUCKET")
 S3_KEY = os.environ.get("S3_KEY", "index.html")
 S3_KEY_BACKUP = os.environ.get("S3_KEY_BACKUP", "index_backup.html")
@@ -52,6 +55,8 @@ GITHUB_USERNAME = get_parameter(GITHUB_USERNAME_PARAM_NAME, False) or GITHUB_USE
 TWITTER_USERNAME = get_parameter(TWITTER_USERNAME_PARAM_NAME, False) or TWITTER_USERNAME
 TWITTER_BEARER_TOKEN = get_parameter(TWITTER_BEARER_TOKEN_PARAM_NAME)
 DISCORD_WEBHOOK_URL = get_parameter(DISCORD_WEBHOOK_URL_PARAM_NAME, False)
+YOUTUBE_API_KEY = get_parameter(YOUTUBE_API_KEY_PARAM_NAME)
+YOUTUBE_CHANNEL_ID = get_parameter(YOUTUBE_CHANNEL_ID_PARAM_NAME, False) or YOUTUBE_CHANNEL_ID
 
 # Maximum Discord message length
 MAX_DISCORD_MESSAGE_LENGTH = 2000
@@ -149,6 +154,7 @@ def get_user_repositories(username, token):
 def get_commits_since_jan_1(username, token):
     """
     Fetch the number of commits made to all GitHub repositories since January 1st.
+    Returns None if there's an error.
     """
     current_year = datetime.now().year
     since = datetime(current_year, 1, 1, tzinfo=timezone.utc).isoformat()
@@ -207,13 +213,13 @@ def get_commits_since_jan_1(username, token):
     except Exception as e:
         error_msg = f"Error in get_commits_since_jan_1: {e}"
         logger.error(error_msg)
-        # Send error to Discord and exit early
-        send_discord_alert(f"❌ Error fetching commits: {error_msg}")
-        raise Exception(error_msg)
+        send_discord_alert(f"⚠️ Error fetching commits: {error_msg}")
+        return None
 
 def get_follower_count(username, bearer_token):
     """
     Fetch the follower count for a Twitter user using Twitter API v2 directly.
+    Returns None if there's an error.
     """
     url = f"https://api.twitter.com/2/users/by/username/{username}"
     headers = {
@@ -236,13 +242,13 @@ def get_follower_count(username, bearer_token):
         else:
             error_msg = f"Unexpected response format: {user_data}"
             logger.error(error_msg)
-            send_discord_alert(f"❌ Error fetching X followers: {error_msg}")
-            raise Exception(error_msg)
+            send_discord_alert(f"⚠️ Error fetching X followers: {error_msg}")
+            return None
     except Exception as e:
         error_msg = f"Error fetching X follower count: {e}"
         logger.error(error_msg)
-        send_discord_alert(f"❌ {error_msg}")
-        raise Exception(error_msg)
+        send_discord_alert(f"⚠️ {error_msg}")
+        return None
 
 def get_historical_data():
     """
@@ -282,14 +288,42 @@ def get_historical_data():
         send_discord_alert(f"⚠️ Error retrieving historical data: {e}")
         return {"data": []}
 
-def update_historical_data(historical_data, commit_count, follower_count, ratio):
+def update_historical_data(historical_data, commit_count, follower_count, ratio, youtube_subscribers):
     """
-    Update historical data with current day's information
+    Update historical data with current day's information.
+    If any data point is None, use the most recent value from historical data.
     """
     # Get current date in PST timezone (without time)
     pacific_tz = pytz.timezone('America/Los_Angeles')
     current_datetime = datetime.now(pacific_tz)
     current_date = current_datetime.strftime("%Y-%m-%d")
+    
+    # Get the most recent entry to use as fallback for missing data
+    most_recent_entry = None
+    if historical_data["data"]:
+        most_recent_entry = historical_data["data"][-1]
+    
+    # Use most recent values for any None data points
+    if most_recent_entry:
+        if commit_count is None:
+            commit_count = most_recent_entry.get("github_commits", 0)
+            logger.info(f"Using most recent GitHub commits value: {commit_count}")
+        
+        if follower_count is None:
+            follower_count = most_recent_entry.get("twitter_followers", 1)
+            logger.info(f"Using most recent Twitter followers value: {follower_count}")
+        
+        if youtube_subscribers is None:
+            youtube_subscribers = most_recent_entry.get("youtube_subscribers", 0)
+            logger.info(f"Using most recent YouTube subscribers value: {youtube_subscribers}")
+    
+    # Calculate total followers (Twitter + YouTube)
+    total_followers = (follower_count or 0) + (youtube_subscribers or 0)
+    logger.info(f"Calculated total followers: {total_followers}")
+    
+    # Always recalculate ratio after ensuring commit_count and total_followers are not None
+    ratio = round((commit_count / total_followers if total_followers > 0 else 1) * 10) / 10
+    logger.info(f"Calculated ratio: {ratio}")
     
     # Check if we already have an entry for today
     today_entry = None
@@ -303,6 +337,8 @@ def update_historical_data(historical_data, commit_count, follower_count, ratio)
         logger.info(f"Updating existing entry for {current_date}")
         today_entry["github_commits"] = commit_count
         today_entry["twitter_followers"] = follower_count
+        today_entry["youtube_subscribers"] = youtube_subscribers
+        today_entry["total_followers"] = total_followers
         today_entry["ratio"] = ratio
         today_entry["last_updated"] = current_datetime.isoformat()
     else:
@@ -311,6 +347,8 @@ def update_historical_data(historical_data, commit_count, follower_count, ratio)
             "date": current_date,
             "github_commits": commit_count,
             "twitter_followers": follower_count,
+            "youtube_subscribers": youtube_subscribers,
+            "total_followers": total_followers,
             "ratio": ratio,
             "last_updated": current_datetime.isoformat()
         })
@@ -383,17 +421,42 @@ def handler(event, context):
                 'body': json.dumps({'error': error_msg})
             }
         
+        # Get historical data first to have fallback values available
+        historical_data = get_historical_data()
+        
         # Get GitHub commits and Twitter followers
         commit_count = get_commits_since_jan_1(GITHUB_USERNAME, GITHUB_TOKEN)
         follower_count = get_follower_count(TWITTER_USERNAME, TWITTER_BEARER_TOKEN)
-
-        # Calculate the ratio (rounded to 1 decimal place)
-        ratio = round((commit_count / follower_count if follower_count > 0 else 1) * 10) / 10
         
-        # Get and update historical data
-        historical_data = get_historical_data()
-        updated_historical_data = update_historical_data(historical_data, commit_count, follower_count, ratio)
+        # Get YouTube subscribers 
+        youtube_subscribers = None
+        try:
+            youtube_subscribers = get_youtube_subscriber_count(YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID)
+            logger.info(f"YouTube subscribers: {youtube_subscribers}")
+        except Exception as e:
+            error_msg = f"Error fetching YouTube subscribers: {e}"
+            logger.error(error_msg)
+            send_discord_alert(f"⚠️ {error_msg}")
+            youtube_subscribers = None
+
+        # We'll calculate the ratio inside update_historical_data after ensuring values are not None
+        # So pass None for ratio here
+        updated_historical_data = update_historical_data(
+            historical_data, 
+            commit_count, 
+            follower_count, 
+            None,  # Pass None for ratio, it will be calculated in the function
+            youtube_subscribers
+        )
         save_historical_data(updated_historical_data)
+        
+        # Get the most recent entry which now has all the updated values
+        most_recent_entry = updated_historical_data["data"][-1]
+        commit_count = most_recent_entry["github_commits"]
+        follower_count = most_recent_entry["twitter_followers"]
+        youtube_subscribers = most_recent_entry["youtube_subscribers"]
+        total_followers = most_recent_entry["total_followers"]
+        ratio = most_recent_entry["ratio"]
         
         # Use the render_html_template function from utils.py with historical data
         html_content = render_html_template(
@@ -448,6 +511,8 @@ def handler(event, context):
                 'message': 'HTML updated and uploaded successfully!',
                 'github_commits': commit_count,
                 'twitter_followers': follower_count,
+                'youtube_subscribers': youtube_subscribers,
+                'total_followers': total_followers,
                 'ratio': ratio
             })
         }

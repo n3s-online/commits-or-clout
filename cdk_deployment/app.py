@@ -117,6 +117,8 @@ class CommitsOrCloutStack(Stack):
         twitter_bearer_token_param_name = "/commits-or-clout/twitter-bearer-token"
         twitter_username_param_name = "/commits-or-clout/twitter-username"
         discord_webhook_url_param_name = "/commits-or-clout/discord-webhook-url"
+        youtube_api_key_param_name = "/commits-or-clout/youtube-api-key"
+        youtube_channel_id_param_name = "/commits-or-clout/youtube-channel-id"
 
         # Create a temporary directory for Lambda code with dependencies
         temp_dir = tempfile.mkdtemp()
@@ -159,6 +161,8 @@ class CommitsOrCloutStack(Stack):
                     "TWITTER_BEARER_TOKEN_PARAM_NAME": twitter_bearer_token_param_name,
                     "TWITTER_USERNAME_PARAM_NAME": twitter_username_param_name,
                     "DISCORD_WEBHOOK_URL_PARAM_NAME": discord_webhook_url_param_name,
+                    "YOUTUBE_API_KEY_PARAM_NAME": youtube_api_key_param_name,
+                    "YOUTUBE_CHANNEL_ID_PARAM_NAME": youtube_channel_id_param_name,
                 },
             )
         finally:
@@ -176,6 +180,8 @@ class CommitsOrCloutStack(Stack):
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{twitter_bearer_token_param_name.lstrip('/')}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{twitter_username_param_name.lstrip('/')}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{discord_webhook_url_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{youtube_api_key_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{youtube_channel_id_param_name.lstrip('/')}",
                 ]
             )
         )
