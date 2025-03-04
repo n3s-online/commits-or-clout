@@ -61,7 +61,7 @@ DISCORD_WEBHOOK_URL = get_parameter(DISCORD_WEBHOOK_URL_PARAM_NAME, False)
 YOUTUBE_API_KEY = get_parameter(YOUTUBE_API_KEY_PARAM_NAME)
 YOUTUBE_CHANNEL_ID = get_parameter(YOUTUBE_CHANNEL_ID_PARAM_NAME, False) or YOUTUBE_CHANNEL_ID
 BLUESKY_API_KEY = get_parameter(BLUESKY_API_KEY_PARAM_NAME)
-BLUESKY_USERNAME = get_parameter(BLUESKY_USERNAME_PARAM_NAME, False) or BLUESKY_USERNAME
+BLUESKY_USERNAME = get_parameter(BLUESKY_USERNAME_PARAM_NAME)
 
 # Maximum Discord message length
 MAX_DISCORD_MESSAGE_LENGTH = 2000
@@ -468,7 +468,7 @@ def handler(event, context):
         bluesky_followers = None
         try:
             if BLUESKY_API_KEY and BLUESKY_USERNAME:
-                logger.info("Fetching Bluesky followers...")
+                logger.info(f"Fetching Bluesky followers for {BLUESKY_USERNAME}")
                 bluesky_start = time.time()
                 bluesky_helper = BlueskyHelper(BLUESKY_API_KEY)
                 bluesky_followers = bluesky_helper.get_total_followers(BLUESKY_USERNAME)
