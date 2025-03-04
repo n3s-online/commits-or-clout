@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 import pytz
 from dotenv import load_dotenv
 from youtube_utils import get_youtube_subscriber_count
+from bluesky_utils import BlueskyHelper
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -22,6 +23,10 @@ GITHUB_USERNAME = os.getenv("GITHUB_USERNAME")
 # YouTube API configuration
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 YOUTUBE_CHANNEL_ID = os.getenv("YOUTUBE_CHANNEL_ID")
+
+# Bluesky API configuration
+BLUESKY_API_KEY = os.getenv("BLUESKY_API_KEY")
+BLUESKY_USERNAME = os.getenv("BLUESKY_USERNAME")
 
 # S3 configuration
 S3_BUCKET = os.getenv("S3_BUCKET")
@@ -252,9 +257,21 @@ def generate_historical_data():
         logger.info(f"Current YouTube subscribers: {current_youtube_subscribers}")
     except Exception as e:
         logger.error(f"Error fetching YouTube subscribers: {e}")
+        raise e
     
     # Get current Twitter followers (fixed value for this script)
     current_twitter_followers = TWITTER_FOLLOWERS
+    
+    # Get current Bluesky followers
+    current_bluesky_followers = 0
+    try:
+        bluesky_helper = BlueskyHelper(BLUESKY_API_KEY)
+        current_bluesky_followers = bluesky_helper.get_total_followers(BLUESKY_USERNAME) or 0
+        logger.info(f"Current Bluesky followers: {current_bluesky_followers}")
+    except Exception as e:
+        logger.error(f"Error fetching Bluesky followers: {e}")
+        raise e
+
     
     # Get existing historical data from S3
     historical_data = get_historical_data_from_s3()
@@ -284,6 +301,7 @@ def generate_historical_data():
             # Use existing follower counts if available, otherwise use current values
             twitter_followers = existing_entry.get("twitter_followers", current_twitter_followers)
             youtube_subscribers = existing_entry.get("youtube_subscribers", current_youtube_subscribers)
+            bluesky_followers = existing_entry.get("bluesky_followers", current_bluesky_followers)
             
             # Always update GitHub commits
             github_commits = cumulative_commits
@@ -291,10 +309,11 @@ def generate_historical_data():
             # No existing data, use current values
             twitter_followers = current_twitter_followers
             youtube_subscribers = current_youtube_subscribers
+            bluesky_followers = current_bluesky_followers
             github_commits = cumulative_commits
         
         # Always recalculate total_followers and ratio
-        total_followers = max(twitter_followers + youtube_subscribers, 1)  # Ensure we don't divide by zero
+        total_followers = max(twitter_followers + youtube_subscribers + bluesky_followers, 1)  # Ensure we don't divide by zero
         ratio = round((github_commits / total_followers) * 10) / 10
         
         # Create or update entry for this date
@@ -303,6 +322,7 @@ def generate_historical_data():
             "github_commits": github_commits,
             "twitter_followers": twitter_followers,
             "youtube_subscribers": youtube_subscribers,
+            "bluesky_followers": bluesky_followers,
             "total_followers": total_followers,
             "ratio": ratio,
             "last_updated": current_pacific_time.isoformat()

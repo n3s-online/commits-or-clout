@@ -9,6 +9,7 @@ from jinja2 import Environment, FileSystemLoader, Template
 import pytz
 from utils import get_html_template, render_html_template  # Import the utility functions
 from youtube_utils import get_youtube_subscriber_count  # Import the YouTube utility function
+from bluesky_utils import BlueskyHelper  # Import the Bluesky utility class
 from botocore.exceptions import ClientError
 
 # Configure logging
@@ -42,6 +43,8 @@ TWITTER_USERNAME_PARAM_NAME = os.environ.get("TWITTER_USERNAME_PARAM_NAME")
 DISCORD_WEBHOOK_URL_PARAM_NAME = os.environ.get("DISCORD_WEBHOOK_URL_PARAM_NAME")
 YOUTUBE_API_KEY_PARAM_NAME = os.environ.get("YOUTUBE_API_KEY_PARAM_NAME")
 YOUTUBE_CHANNEL_ID_PARAM_NAME = os.environ.get("YOUTUBE_CHANNEL_ID_PARAM_NAME")
+BLUESKY_API_KEY_PARAM_NAME = os.environ.get("BLUESKY_API_KEY_PARAM_NAME")
+BLUESKY_USERNAME_PARAM_NAME = os.environ.get("BLUESKY_USERNAME_PARAM_NAME")
 S3_BUCKET = os.environ.get("S3_BUCKET")
 S3_KEY = os.environ.get("S3_KEY", "index.html")
 S3_KEY_BACKUP = os.environ.get("S3_KEY_BACKUP", "index_backup.html")
@@ -57,6 +60,8 @@ TWITTER_BEARER_TOKEN = get_parameter(TWITTER_BEARER_TOKEN_PARAM_NAME)
 DISCORD_WEBHOOK_URL = get_parameter(DISCORD_WEBHOOK_URL_PARAM_NAME, False)
 YOUTUBE_API_KEY = get_parameter(YOUTUBE_API_KEY_PARAM_NAME)
 YOUTUBE_CHANNEL_ID = get_parameter(YOUTUBE_CHANNEL_ID_PARAM_NAME, False) or YOUTUBE_CHANNEL_ID
+BLUESKY_API_KEY = get_parameter(BLUESKY_API_KEY_PARAM_NAME)
+BLUESKY_USERNAME = get_parameter(BLUESKY_USERNAME_PARAM_NAME, False) or BLUESKY_USERNAME
 
 # Maximum Discord message length
 MAX_DISCORD_MESSAGE_LENGTH = 2000
@@ -288,7 +293,7 @@ def get_historical_data():
         send_discord_alert(f"⚠️ Error retrieving historical data: {e}")
         return {"data": []}
 
-def update_historical_data(historical_data, commit_count, follower_count, ratio, youtube_subscribers):
+def update_historical_data(historical_data, commit_count, follower_count, ratio, youtube_subscribers, bluesky_followers):
     """
     Update historical data with current day's information.
     If any data point is None, use the most recent value from historical data.
@@ -316,9 +321,13 @@ def update_historical_data(historical_data, commit_count, follower_count, ratio,
         if youtube_subscribers is None:
             youtube_subscribers = most_recent_entry.get("youtube_subscribers", 0)
             logger.info(f"Using most recent YouTube subscribers value: {youtube_subscribers}")
+            
+        if bluesky_followers is None:
+            bluesky_followers = most_recent_entry.get("bluesky_followers", 0)
+            logger.info(f"Using most recent Bluesky followers value: {bluesky_followers}")
     
-    # Calculate total followers (Twitter + YouTube)
-    total_followers = (follower_count or 0) + (youtube_subscribers or 0)
+    # Calculate total followers (Twitter + YouTube + Bluesky)
+    total_followers = (follower_count or 0) + (youtube_subscribers or 0) + (bluesky_followers or 0)
     logger.info(f"Calculated total followers: {total_followers}")
     
     # Always recalculate ratio after ensuring commit_count and total_followers are not None
@@ -338,6 +347,7 @@ def update_historical_data(historical_data, commit_count, follower_count, ratio,
         today_entry["github_commits"] = commit_count
         today_entry["twitter_followers"] = follower_count
         today_entry["youtube_subscribers"] = youtube_subscribers
+        today_entry["bluesky_followers"] = bluesky_followers
         today_entry["total_followers"] = total_followers
         today_entry["ratio"] = ratio
         today_entry["last_updated"] = current_datetime.isoformat()
@@ -348,6 +358,7 @@ def update_historical_data(historical_data, commit_count, follower_count, ratio,
             "github_commits": commit_count,
             "twitter_followers": follower_count,
             "youtube_subscribers": youtube_subscribers,
+            "bluesky_followers": bluesky_followers,
             "total_followers": total_followers,
             "ratio": ratio,
             "last_updated": current_datetime.isoformat()
@@ -438,6 +449,19 @@ def handler(event, context):
             logger.error(error_msg)
             send_discord_alert(f"⚠️ {error_msg}")
             youtube_subscribers = None
+            
+        # Get Bluesky followers
+        bluesky_followers = None
+        try:
+            if BLUESKY_API_KEY and BLUESKY_USERNAME:
+                bluesky_helper = BlueskyHelper(BLUESKY_API_KEY)
+                bluesky_followers = bluesky_helper.get_total_followers(BLUESKY_USERNAME)
+                logger.info(f"Bluesky followers: {bluesky_followers}")
+        except Exception as e:
+            error_msg = f"Error fetching Bluesky followers: {e}"
+            logger.error(error_msg)
+            send_discord_alert(f"⚠️ {error_msg}")
+            bluesky_followers = None
 
         # We'll calculate the ratio inside update_historical_data after ensuring values are not None
         # So pass None for ratio here
@@ -446,7 +470,8 @@ def handler(event, context):
             commit_count, 
             follower_count, 
             None,  # Pass None for ratio, it will be calculated in the function
-            youtube_subscribers
+            youtube_subscribers,
+            bluesky_followers
         )
         save_historical_data(updated_historical_data)
         
@@ -455,6 +480,7 @@ def handler(event, context):
         commit_count = most_recent_entry["github_commits"]
         follower_count = most_recent_entry["twitter_followers"]
         youtube_subscribers = most_recent_entry["youtube_subscribers"]
+        bluesky_followers = most_recent_entry["bluesky_followers"]
         total_followers = most_recent_entry["total_followers"]
         ratio = most_recent_entry["ratio"]
         
@@ -465,7 +491,8 @@ def handler(event, context):
             GITHUB_USERNAME, 
             TWITTER_USERNAME,
             updated_historical_data,  # Pass the historical data to the template
-            YOUTUBE_CHANNEL_ID  # Pass the YouTube channel ID
+            YOUTUBE_CHANNEL_ID,  # Pass the YouTube channel ID
+            BLUESKY_USERNAME  # Pass the Bluesky username
         )
 
         # Upload to S3
@@ -513,6 +540,7 @@ def handler(event, context):
                 'github_commits': commit_count,
                 'twitter_followers': follower_count,
                 'youtube_subscribers': youtube_subscribers,
+                'bluesky_followers': bluesky_followers,
                 'total_followers': total_followers,
                 'ratio': ratio
             })

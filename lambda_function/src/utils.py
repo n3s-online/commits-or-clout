@@ -483,6 +483,21 @@ def get_html_template():
                 </a>
                 <div class="stat-description">Current YouTube subscriber count</div>
             </div>
+            
+            <div class="stat-card" style="border-top: 4px solid #0085ff;">
+                <div class="stat-title">
+                    <a href="https://bsky.app/profile/{{ bluesky_username }}" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+                        <svg height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12.001 2C6.47598 2 2.00098 6.475 2.00098 12C2.00098 17.525 6.47598 22 12.001 22C17.526 22 22.001 17.525 22.001 12C22.001 6.475 17.526 2 12.001 2ZM12.001 4C16.421 4 20.001 7.58 20.001 12C20.001 16.42 16.421 20 12.001 20C7.58098 20 4.00098 16.42 4.00098 12C4.00098 7.58 7.58098 4 12.001 4ZM12.001 7C9.79098 7 8.00098 8.79 8.00098 11C8.00098 13.21 9.79098 15 12.001 15C14.211 15 16.001 13.21 16.001 11C16.001 8.79 14.211 7 12.001 7Z" />
+                        </svg>
+                        Bluesky Followers
+                    </a>
+                </div>
+                <a href="https://bsky.app/profile/{{ bluesky_username }}" target="_blank" style="text-decoration: none;">
+                    <div class="stat-value" style="color: #0085ff;">{{ bluesky_followers }}</div>
+                </a>
+                <div class="stat-description">Current Bluesky follower count</div>
+            </div>
         </div>
 
         <div class="footer">
@@ -500,6 +515,14 @@ def get_html_template():
                     </svg>
                     @{{ twitter_username }}
                 </a>
+                {% if bluesky_username %}
+                <a href="https://bsky.app/profile/{{ bluesky_username }}" target="_blank">
+                    <svg height="16" width="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12.001 2C6.47598 2 2.00098 6.475 2.00098 12C2.00098 17.525 6.47598 22 12.001 22C17.526 22 22.001 17.525 22.001 12C22.001 6.475 17.526 2 12.001 2ZM12.001 4C16.421 4 20.001 7.58 20.001 12C20.001 16.42 16.421 20 12.001 20C7.58098 20 4.00098 16.42 4.00098 12C4.00098 7.58 7.58098 4 12.001 4ZM12.001 7C9.79098 7 8.00098 8.79 8.00098 11C8.00098 13.21 9.79098 15 12.001 15C14.211 15 16.001 13.21 16.001 11C16.001 8.79 14.211 7 12.001 7Z" />
+                    </svg>
+                    @{{ bluesky_username }}
+                </a>
+                {% endif %}
             </div>
             <p class="last-updated">Last updated: <span id="last-updated">{{ last_updated }}</span></p>
         </div>
@@ -515,6 +538,7 @@ def get_html_template():
         const commits = historicalData.data.map(entry => entry.github_commits);
         const followers = historicalData.data.map(entry => entry.twitter_followers);
         const youtubeSubscribers = historicalData.data.map(entry => entry.youtube_subscribers || 0);
+        const blueskyFollowers = historicalData.data.map(entry => entry.bluesky_followers || 0);
         const totalFollowers = historicalData.data.map(entry => entry.total_followers || entry.twitter_followers);
         
         // Function to determine point radius based on dataset size
@@ -577,6 +601,17 @@ def get_html_template():
                         pointBackgroundColor: '#FF0000',
                         pointRadius: pointRadius,
                         pointHoverRadius: 4
+                    },
+                    {
+                        label: 'Bluesky Followers',
+                        data: blueskyFollowers,
+                        borderColor: '#0085ff',
+                        backgroundColor: 'rgba(0, 133, 255, 0.1)',
+                        borderWidth: 2,
+                        tension: 0.1,
+                        pointBackgroundColor: '#0085ff',
+                        pointRadius: pointRadius,
+                        pointHoverRadius: 4
                     }
                 ]
             },
@@ -634,7 +669,7 @@ def get_html_template():
 </body>
 </html>"""
 
-def render_html_template(commit_count, follower_count, github_username, twitter_username, historical_data=None, youtube_channel_id=None):
+def render_html_template(commit_count, follower_count, github_username, twitter_username, historical_data=None, youtube_channel_id=None, bluesky_username=None):
     """
     Render the HTML template with the provided data
     
@@ -645,17 +680,20 @@ def render_html_template(commit_count, follower_count, github_username, twitter_
         twitter_username (str): Twitter username
         historical_data (dict, optional): Historical data for the chart
         youtube_channel_id (str, optional): YouTube channel ID for linking to the channel
+        bluesky_username (str, optional): Bluesky username for linking to the profile
         
     Returns:
         str: Rendered HTML content
     """
-    # Get YouTube subscribers and total followers from historical data
+    # Get YouTube subscribers, Bluesky followers, and total followers from historical data
     youtube_subscribers = 0
+    bluesky_followers = 0
     total_followers = follower_count
     
     if historical_data and "data" in historical_data and historical_data["data"]:
         latest_entry = historical_data["data"][-1]
         youtube_subscribers = latest_entry.get("youtube_subscribers", 0)
+        bluesky_followers = latest_entry.get("bluesky_followers", 0)
         total_followers = latest_entry.get("total_followers", follower_count)
     
     # Calculate ratio based on total followers
@@ -687,12 +725,14 @@ def render_html_template(commit_count, follower_count, github_username, twitter_
         github_commits=commit_count,
         twitter_followers=follower_count,
         youtube_subscribers=youtube_subscribers,
+        bluesky_followers=bluesky_followers,
         total_followers=total_followers,
         ratio_text=ratio_text,
         ratio_text_subtitle=ratio_text_subtitle,
         github_username=github_username,
         twitter_username=twitter_username,
         youtube_channel_id=youtube_channel_id or "",
+        bluesky_username=bluesky_username or "",
         last_updated=current_date,
         historical_data_json=historical_data_json
     )

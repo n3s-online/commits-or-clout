@@ -25,7 +25,7 @@ def generate_fake_historical_data(days=28):
     base_commits = 200
     base_followers = 80
     base_youtube_subscribers = 12  
-    
+    base_bluesky_followers = 10
     # Generate data for each day with some variation
     for i in range(days, 0, -1):
         date = today - timedelta(days=i)
@@ -35,9 +35,10 @@ def generate_fake_historical_data(days=28):
         day_commits = base_commits + ((days - i) * 2) + (((days - i) % 7) * 5)  # Increasing trend with weekly pattern
         day_followers = base_followers + ((days-i) // 2)  # Slower increasing trend
         day_youtube_subscribers = base_youtube_subscribers + ((days - i))  # Steady growth for YouTube
+        day_bluesky_followers = base_bluesky_followers + ((days - i)*2)  # Steady growth for Bluesky
         
         # Calculate total followers
-        total_followers = day_followers + day_youtube_subscribers
+        total_followers = day_followers + day_youtube_subscribers + day_bluesky_followers
         
         # Calculate ratio based on total followers
         ratio = round((day_commits / total_followers if total_followers > 0 else 1) * 10) / 10
@@ -48,6 +49,7 @@ def generate_fake_historical_data(days=28):
             "github_commits": day_commits,
             "twitter_followers": day_followers,
             "youtube_subscribers": day_youtube_subscribers,
+            "bluesky_followers": day_bluesky_followers,
             "total_followers": total_followers,
             "ratio": ratio,
             "last_updated": f"{date_str}T12:00:00-08:00"
@@ -68,24 +70,28 @@ def main():
     commit_count = latest_entry["github_commits"]
     follower_count = latest_entry["twitter_followers"]
     youtube_subscribers = latest_entry["youtube_subscribers"]
-    total_followers = latest_entry["total_followers"]
-    
+    bluesky_followers = latest_entry["bluesky_followers"]
+    total_followers = latest_entry["total_followers"]   
+
     # Set usernames and channel ID
-    github_username = "your_github_username"
-    twitter_username = "your_twitter_username"
+    github_username = "n3s-online"
+    twitter_username = "N3sOnline"
     youtube_channel_id = "UCX6OQ3DkcsbYNE6H8uQQuVA"  # MrBeast's YouTube channel ID
+    bluesky_username= "n3sonline.bsky.social"
     
     # Print summary of the historical data
     print(f"Generated {len(historical_data['data'])} days of fake historical data")
     print(f"First day: {historical_data['data'][0]['date']}, "
           f"Commits: {historical_data['data'][0]['github_commits']}, "
           f"Twitter Followers: {historical_data['data'][0]['twitter_followers']}, "
-          f"YouTube Subscribers: {historical_data['data'][0]['youtube_subscribers']}")
+          f"YouTube Subscribers: {historical_data['data'][0]['youtube_subscribers']}, "
+          f"Bluesky Followers: {historical_data['data'][0]['bluesky_followers']}")
     print(f"Last day: {historical_data['data'][-1]['date']}, "
           f"Commits: {commit_count}, "
           f"Twitter Followers: {follower_count}, "
           f"YouTube Subscribers: {youtube_subscribers}, "
-          f"Total Followers: {total_followers}")
+          f"Total Followers: {total_followers}, "
+          f"Bluesky Followers: {bluesky_followers}")
     
     # Render the HTML template with historical data
     html_content = render_html_template(
@@ -94,7 +100,8 @@ def main():
         github_username=github_username,
         twitter_username=twitter_username,
         historical_data=historical_data,
-        youtube_channel_id=youtube_channel_id
+        youtube_channel_id=youtube_channel_id,
+        bluesky_username=bluesky_username
     )
     
     # Write to index.html file

@@ -119,6 +119,8 @@ class CommitsOrCloutStack(Stack):
         discord_webhook_url_param_name = "/commits-or-clout/discord-webhook-url"
         youtube_api_key_param_name = "/commits-or-clout/youtube-api-key"
         youtube_channel_id_param_name = "/commits-or-clout/youtube-channel-id"
+        bluesky_api_key_param_name = "/commits-or-clout/bluesky-api-key"
+        bluesky_username_param_name = "/commits-or-clout/bluesky-username"
 
         # Create a temporary directory for Lambda code with dependencies
         temp_dir = tempfile.mkdtemp()
@@ -163,6 +165,8 @@ class CommitsOrCloutStack(Stack):
                     "DISCORD_WEBHOOK_URL_PARAM_NAME": discord_webhook_url_param_name,
                     "YOUTUBE_API_KEY_PARAM_NAME": youtube_api_key_param_name,
                     "YOUTUBE_CHANNEL_ID_PARAM_NAME": youtube_channel_id_param_name,
+                    "BLUESKY_API_KEY_PARAM_NAME": bluesky_api_key_param_name,
+                    "BLUESKY_USERNAME_PARAM_NAME": bluesky_username_param_name,
                 },
             )
         finally:
@@ -182,6 +186,8 @@ class CommitsOrCloutStack(Stack):
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{discord_webhook_url_param_name.lstrip('/')}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{youtube_api_key_param_name.lstrip('/')}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{youtube_channel_id_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{bluesky_api_key_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{bluesky_username_param_name.lstrip('/')}",
                 ]
             )
         )
