@@ -44,6 +44,10 @@ def get_html_template():
             padding: 0;
             box-sizing: border-box;
         }
+        
+        html {
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -158,6 +162,8 @@ def get_html_template():
             opacity: 0.7;
             animation: float 6s ease-in-out infinite;
             z-index: -1;
+            pointer-events: none; /* Prevent interaction with the logo */
+            transform-origin: center; /* Ensure rotation happens from center */
         }
 
         .floating-logo img {
