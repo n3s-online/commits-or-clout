@@ -380,6 +380,11 @@ def get_html_template():
             .stat-value {
                 font-size: 2.5rem;
             }
+            
+            /* Hide chart container on mobile screens */
+            .chart-container {
+                display: none;
+            }
         }
     </style>
 </head>
