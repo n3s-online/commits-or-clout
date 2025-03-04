@@ -43,7 +43,8 @@ This directory contains the AWS CDK application for deploying and scheduling the
 To deploy the Lambda function:
 
 1. Make sure your AWS credentials are configured
-2. Run:
+2. Make sure you've ran `source cdk-venv/bin/activate` to activate the virtual environment
+3. Run:
    ```
    cdk deploy --app "python app.py"
    ```
