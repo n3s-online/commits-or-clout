@@ -266,7 +266,11 @@ def get_html_template():
         }
 
         .twitter-card {
-            border-top: 4px solid var(--accent-twitter);
+            border-top: 4px solid #aaaaaa;
+        }
+
+        .total-card {
+            border-top: 4px solid #1d9bf0;
         }
 
         .stat-title {
@@ -292,7 +296,11 @@ def get_html_template():
         }
 
         .twitter-card .stat-value {
-            color: var(--accent-twitter);
+            color: #aaaaaa;
+        }
+
+        .total-card .stat-value {
+            color: #1d9bf0;
         }
 
         .stat-description {
@@ -442,7 +450,7 @@ def get_html_template():
                 <div class="stat-description">Total commits since January 1st</div>
             </div>
 
-            <div class="stat-card twitter-card">
+            <div class="stat-card total-card">
                 <div class="stat-title">
                     <a href="https://willness.dev?tab=socials" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
                         <svg height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
@@ -590,22 +598,22 @@ def get_html_template():
                     {
                         label: 'Total Followers',
                         data: totalFollowers,
-                        borderColor: '#9c27b0',
-                        backgroundColor: 'rgba(156, 39, 176, 0.1)',
+                        borderColor: '#1d9bf0',
+                        backgroundColor: 'rgba(29, 155, 240, 0.1)',
                         borderWidth: 2,
                         tension: 0.1,
-                        pointBackgroundColor: '#9c27b0',
+                        pointBackgroundColor: '#1d9bf0',
                         pointRadius: pointRadius,
                         pointHoverRadius: 4
                     },
                     {
                         label: 'X/Twitter Followers',
                         data: followers,
-                        borderColor: '#1d9bf0',
-                        backgroundColor: 'rgba(29, 155, 240, 0.1)',
+                        borderColor: '#aaaaaa',
+                        backgroundColor: 'rgba(170, 170, 170, 0.1)',
                         borderWidth: 2,
                         tension: 0.1,
-                        pointBackgroundColor: '#1d9bf0',
+                        pointBackgroundColor: '#aaaaaa',
                         pointRadius: pointRadius,
                         pointHoverRadius: 4
                     },
