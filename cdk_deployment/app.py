@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 import os
-import tempfile
-import shutil
-import subprocess
 from aws_cdk import (
     App,
     Stack,
@@ -18,6 +15,7 @@ from aws_cdk import (
     aws_s3_deployment as s3deploy,
     aws_ssm as ssm,
     aws_iam as iam,
+    aws_ecr_assets as ecr_assets,
     Duration,
     RemovalPolicy,
     CfnOutput,
@@ -122,57 +120,38 @@ class CommitsOrCloutStack(Stack):
         bluesky_api_key_param_name = "/commits-or-clout/bluesky-api-key"
         bluesky_username_param_name = "/commits-or-clout/bluesky-username"
 
-        # Create a temporary directory for Lambda code with dependencies
-        temp_dir = tempfile.mkdtemp()
-        try:
-            # Copy Lambda source code to temp directory
-            lambda_src_dir = os.path.abspath("../lambda_function/src")
-            for item in os.listdir(lambda_src_dir):
-                src_item = os.path.join(lambda_src_dir, item)
-                dst_item = os.path.join(temp_dir, item)
-                if os.path.isdir(src_item):
-                    shutil.copytree(src_item, dst_item)
-                else:
-                    shutil.copy2(src_item, dst_item)
-            
-            # Install dependencies to the temp directory
-            requirements_file = os.path.abspath("../lambda_function/requirements.txt")
-            subprocess.check_call([
-                "pip", "install", 
-                "-r", requirements_file,
-                "--target", temp_dir,
-                "--no-user"
-            ])
-            
-            # Define the Lambda function with dependencies included
-            lambda_function = _lambda.Function(
-                self, 
-                "CommitsOrCloutUpdater",
-                runtime=_lambda.Runtime.PYTHON_3_9,
-                code=_lambda.Code.from_asset(temp_dir),
-                handler="lambda_handler.handler",
-                timeout=Duration.seconds(120),
-                memory_size=128,
-                description="Lambda function that updates the CommitsOrClout website",
-                environment={
-                    "S3_BUCKET": website_bucket.bucket_name,
-                    "S3_KEY": "index.html",
-                    "S3_HISTORY_KEY": "historical_data.json",
-                    "GITHUB_TOKEN_PARAM_NAME": github_token_param_name,
-                    "GITHUB_USERNAME_PARAM_NAME": github_username_param_name,
-                    "TWITTER_BEARER_TOKEN_PARAM_NAME": twitter_bearer_token_param_name,
-                    "TWITTER_USERNAME_PARAM_NAME": twitter_username_param_name,
-                    "DISCORD_WEBHOOK_URL_PARAM_NAME": discord_webhook_url_param_name,
-                    "YOUTUBE_API_KEY_PARAM_NAME": youtube_api_key_param_name,
-                    "YOUTUBE_CHANNEL_ID_PARAM_NAME": youtube_channel_id_param_name,
-                    "BLUESKY_API_KEY_PARAM_NAME": bluesky_api_key_param_name,
-                    "BLUESKY_USERNAME_PARAM_NAME": bluesky_username_param_name,
-                },
-            )
-        finally:
-            # Clean up the temporary directory when done
-            # Comment this out if you want to inspect the contents for debugging
-            shutil.rmtree(temp_dir)
+        # Define the Lambda function using Docker container
+        lambda_function = _lambda.DockerImageFunction(
+            self, 
+            "CommitsOrCloutUpdater",
+            code=_lambda.DockerImageCode.from_image_asset(
+                "../lambda_function",  # Path to the directory containing Dockerfile
+                # No need to specify cmd as we're using ENTRYPOINT in Dockerfile
+                platform=ecr_assets.Platform.LINUX_AMD64,  # Specify Linux AMD64 platform
+                build_args={
+                    "DOCKER_BUILDKIT": "1"  # Enable BuildKit for better cross-platform support
+                }
+            ),
+            timeout=Duration.seconds(300),
+            memory_size=1024,  # Increased to 1GB for better performance
+            description="Lambda function that updates the CommitsOrClout website",
+            environment={
+                "S3_BUCKET": website_bucket.bucket_name,
+                "S3_KEY": "index.html",
+                "S3_HISTORY_KEY": "historical_data.json",
+                "GITHUB_TOKEN_PARAM_NAME": github_token_param_name,
+                "GITHUB_USERNAME_PARAM_NAME": github_username_param_name,
+                "TWITTER_BEARER_TOKEN_PARAM_NAME": twitter_bearer_token_param_name,
+                "TWITTER_USERNAME_PARAM_NAME": twitter_username_param_name,
+                "DISCORD_WEBHOOK_URL_PARAM_NAME": discord_webhook_url_param_name,
+                "YOUTUBE_API_KEY_PARAM_NAME": youtube_api_key_param_name,
+                "YOUTUBE_CHANNEL_ID_PARAM_NAME": youtube_channel_id_param_name,
+                "BLUESKY_API_KEY_PARAM_NAME": bluesky_api_key_param_name,
+                "BLUESKY_USERNAME_PARAM_NAME": bluesky_username_param_name,
+                "PYTHONUNBUFFERED": "1"  # Ensure Python output is unbuffered for better logging
+            },
+            architecture=_lambda.Architecture.X86_64  # Ensure Lambda runs on x86_64
+        )
         
         # Grant the Lambda function permission to read the SSM parameters
         lambda_function.add_to_role_policy(

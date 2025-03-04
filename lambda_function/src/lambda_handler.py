@@ -414,6 +414,8 @@ def handler(event, context):
     Returns:
         dict: Response object
     """
+    import time
+    start_time = time.time()
     logger.info("Lambda function invoked with event: %s", json.dumps(event))
     
     try:
@@ -433,17 +435,29 @@ def handler(event, context):
             }
         
         # Get historical data first to have fallback values available
+        logger.info("Fetching historical data...")
+        historical_data_start = time.time()
         historical_data = get_historical_data()
+        logger.info(f"Historical data fetched in {time.time() - historical_data_start:.2f} seconds")
         
         # Get GitHub commits and Twitter followers
+        logger.info("Fetching GitHub commits...")
+        github_start = time.time()
         commit_count = get_commits_since_jan_1(GITHUB_USERNAME, GITHUB_TOKEN)
+        logger.info(f"GitHub commits fetched in {time.time() - github_start:.2f} seconds: {commit_count}")
+        
+        logger.info("Fetching Twitter followers...")
+        twitter_start = time.time()
         follower_count = get_follower_count(TWITTER_USERNAME, TWITTER_BEARER_TOKEN)
+        logger.info(f"Twitter followers fetched in {time.time() - twitter_start:.2f} seconds: {follower_count}")
         
         # Get YouTube subscribers 
         youtube_subscribers = None
         try:
+            logger.info("Fetching YouTube subscribers...")
+            youtube_start = time.time()
             youtube_subscribers = get_youtube_subscriber_count(YOUTUBE_API_KEY, YOUTUBE_CHANNEL_ID)
-            logger.info(f"YouTube subscribers: {youtube_subscribers}")
+            logger.info(f"YouTube subscribers fetched in {time.time() - youtube_start:.2f} seconds: {youtube_subscribers}")
         except Exception as e:
             error_msg = f"Error fetching YouTube subscribers: {e}"
             logger.error(error_msg)
@@ -454,9 +468,11 @@ def handler(event, context):
         bluesky_followers = None
         try:
             if BLUESKY_API_KEY and BLUESKY_USERNAME:
+                logger.info("Fetching Bluesky followers...")
+                bluesky_start = time.time()
                 bluesky_helper = BlueskyHelper(BLUESKY_API_KEY)
                 bluesky_followers = bluesky_helper.get_total_followers(BLUESKY_USERNAME)
-                logger.info(f"Bluesky followers: {bluesky_followers}")
+                logger.info(f"Bluesky followers fetched in {time.time() - bluesky_start:.2f} seconds: {bluesky_followers}")
         except Exception as e:
             error_msg = f"Error fetching Bluesky followers: {e}"
             logger.error(error_msg)
@@ -465,6 +481,8 @@ def handler(event, context):
 
         # We'll calculate the ratio inside update_historical_data after ensuring values are not None
         # So pass None for ratio here
+        logger.info("Updating historical data...")
+        update_start = time.time()
         updated_historical_data = update_historical_data(
             historical_data, 
             commit_count, 
@@ -473,7 +491,12 @@ def handler(event, context):
             youtube_subscribers,
             bluesky_followers
         )
+        logger.info(f"Historical data updated in {time.time() - update_start:.2f} seconds")
+        
+        logger.info("Saving historical data...")
+        save_start = time.time()
         save_historical_data(updated_historical_data)
+        logger.info(f"Historical data saved in {time.time() - save_start:.2f} seconds")
         
         # Get the most recent entry which now has all the updated values
         most_recent_entry = updated_historical_data["data"][-1]
@@ -485,6 +508,8 @@ def handler(event, context):
         ratio = most_recent_entry["ratio"]
         
         # Use the render_html_template function from utils.py with historical data
+        logger.info("Rendering HTML template...")
+        render_start = time.time()
         html_content = render_html_template(
             commit_count, 
             follower_count, 
@@ -494,9 +519,13 @@ def handler(event, context):
             YOUTUBE_CHANNEL_ID,  # Pass the YouTube channel ID
             BLUESKY_USERNAME  # Pass the Bluesky username
         )
+        logger.info(f"HTML template rendered in {time.time() - render_start:.2f} seconds")
 
         # Upload to S3
         try:
+            logger.info("Uploading to S3...")
+            s3_start = time.time()
+            
             # First, create a backup of the existing index.html
             try:
                 # Check if the file exists before trying to copy it
@@ -523,6 +552,7 @@ def handler(event, context):
                 ContentType='text/html',
                 CacheControl='max-age=1800'  # 30 minutes in seconds, matching the Lambda schedule
             )
+            logger.info(f"S3 upload completed in {time.time() - s3_start:.2f} seconds")
             logger.info(f"Successfully uploaded to s3://{S3_BUCKET}/{S3_KEY}")
         except Exception as e:
             error_msg = f"Error uploading to S3: {e}"
@@ -533,6 +563,9 @@ def handler(event, context):
                 'body': json.dumps({'error': error_msg})
             }
 
+        total_execution_time = time.time() - start_time
+        logger.info(f"Total Lambda execution time: {total_execution_time:.2f} seconds")
+        
         return {
             'statusCode': 200,
             'body': json.dumps({
@@ -542,16 +575,27 @@ def handler(event, context):
                 'youtube_subscribers': youtube_subscribers,
                 'bluesky_followers': bluesky_followers,
                 'total_followers': total_followers,
-                'ratio': ratio
+                'ratio': ratio,
+                'execution_time_seconds': total_execution_time
             })
         }
     except Exception as e:
         error_msg = f"Error in Lambda execution: {str(e)}"
         logger.error(error_msg)
         send_discord_alert(f"❌ {error_msg}")
+        
+        total_execution_time = time.time() - start_time
+        logger.error(f"Lambda failed after {total_execution_time:.2f} seconds")
+        
         return {
             'statusCode': 500,
             'body': json.dumps({
-                'error': str(e)
+                'error': error_msg,
+                'execution_time_seconds': total_execution_time
             })
-        } 
+        }
+
+# Add this at the end of the file to ensure the handler is properly exposed
+if __name__ == "__main__":
+    # For local testing
+    handler({}, None) 
