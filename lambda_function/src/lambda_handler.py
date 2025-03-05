@@ -507,6 +507,18 @@ def handler(event, context):
         total_followers = most_recent_entry["total_followers"]
         ratio = most_recent_entry["ratio"]
         
+        # Calculate today's changes by comparing with yesterday's data
+        commits_today = 0
+        followers_today = 0
+        
+        if len(updated_historical_data["data"]) > 1:
+            yesterday_entry = updated_historical_data["data"][-2]
+            commits_today = commit_count - yesterday_entry["github_commits"]
+            followers_today = total_followers - yesterday_entry["total_followers"]
+            logger.info(f"Daily changes: +{commits_today} commits, +{followers_today} followers")
+        else:
+            logger.info("No previous data available to calculate daily changes")
+        
         # Use the render_html_template function from utils.py with historical data
         logger.info("Rendering HTML template...")
         render_start = time.time()
@@ -517,7 +529,9 @@ def handler(event, context):
             TWITTER_USERNAME,
             updated_historical_data,  # Pass the historical data to the template
             YOUTUBE_CHANNEL_ID,  # Pass the YouTube channel ID
-            BLUESKY_USERNAME  # Pass the Bluesky username
+            BLUESKY_USERNAME,  # Pass the Bluesky username
+            commits_today,  # Pass the commits made today
+            followers_today  # Pass the followers gained today
         )
         logger.info(f"HTML template rendered in {time.time() - render_start:.2f} seconds")
 
@@ -576,6 +590,8 @@ def handler(event, context):
                 'bluesky_followers': bluesky_followers,
                 'total_followers': total_followers,
                 'ratio': ratio,
+                'commits_today': commits_today,
+                'followers_today': followers_today,
                 'execution_time_seconds': total_execution_time
             })
         }

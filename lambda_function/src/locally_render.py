@@ -73,6 +73,15 @@ def main():
     bluesky_followers = latest_entry["bluesky_followers"]
     total_followers = latest_entry["total_followers"]   
 
+    # Calculate today's changes by comparing with yesterday's data
+    commits_today = 0
+    followers_today = 0
+    
+    if len(historical_data["data"]) > 1:
+        yesterday_entry = historical_data["data"][-2]
+        commits_today = commit_count - yesterday_entry["github_commits"]
+        followers_today = total_followers - yesterday_entry["total_followers"]
+
     # Set usernames and channel ID
     github_username = "n3s-online"
     twitter_username = "N3sOnline"
@@ -101,7 +110,9 @@ def main():
         twitter_username=twitter_username,
         historical_data=historical_data,
         youtube_channel_id=youtube_channel_id,
-        bluesky_username=bluesky_username
+        bluesky_username=bluesky_username,
+        commits_today=commits_today,
+        followers_today=followers_today
     )
     
     # Write to index.html file

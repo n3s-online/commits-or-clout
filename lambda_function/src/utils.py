@@ -478,6 +478,42 @@ def get_html_template():
             <canvas id="historyChart"></canvas>
         </div>
 
+        <!-- Today's Stats -->
+        <div class="chart-container">
+            <h2 class="chart-title">Today's Activity</h2>
+            <div class="stats-container" style="margin-bottom: 0;">
+                <div class="stat-card github-card">
+                    <div class="stat-title">
+                        <a href="https://github.com/{{ github_username }}" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+                            <svg height="24" width="24" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                            </svg>
+                            Today's Commits
+                        </a>
+                    </div>
+                    <a href="https://github.com/{{ github_username }}" target="_blank" style="text-decoration: none;">
+                        <div class="stat-value">{{ commits_today }}</div>
+                    </a>
+                    <div class="stat-description">Commits made today</div>
+                </div>
+
+                <div class="stat-card total-card">
+                    <div class="stat-title">
+                        <a href="https://willness.dev?tab=socials" target="_blank" style="color: inherit; text-decoration: none; display: flex; align-items: center;">
+                            <svg height="24" width="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17.9,17.39C17.64,16.59 16.89,16 16,16H15V13A1,1 0 0,0 14,12H8V10H10A1,1 0 0,0 11,9V7H13A2,2 0 0,0 15,5V4.59C17.93,5.77 20,8.64 20,12C20,14.19 19.2,15.8 17.9,17.39M11,19.93C7.05,19.44 4,16.08 4,12C4,11.38 4.08,10.78 4.21,10.21L9,15V16A2,2 0 0,0 11,18M12,2A10,10 0 0,0 2,12A10,10 0 0,0 12,22A10,10 0 0,0 22,12A10,10 0 0,0 12,2Z" />
+                            </svg>
+                            Today's Followers
+                        </a>
+                    </div>
+                    <a href="https://willness.dev?tab=socials" target="_blank" style="text-decoration: none;">
+                        <div class="stat-value">{{ followers_today }}</div>
+                    </a>
+                    <div class="stat-description">Followers gained today</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Social Media Breakdown -->
         <div class="stats-container">
             <div class="stat-card twitter-card">
@@ -695,7 +731,7 @@ def get_html_template():
 </body>
 </html>"""
 
-def render_html_template(commit_count, follower_count, github_username, twitter_username, historical_data=None, youtube_channel_id=None, bluesky_username=None):
+def render_html_template(commit_count, follower_count, github_username, twitter_username, historical_data=None, youtube_channel_id=None, bluesky_username=None, commits_today=0, followers_today=0):
     """
     Render the HTML template with the provided data
     
@@ -707,6 +743,8 @@ def render_html_template(commit_count, follower_count, github_username, twitter_
         historical_data (dict, optional): Historical data for the chart
         youtube_channel_id (str, optional): YouTube channel ID for linking to the channel
         bluesky_username (str, optional): Bluesky username for linking to the profile
+        commits_today (int, optional): Number of commits made today
+        followers_today (int, optional): Number of followers gained today
         
     Returns:
         str: Rendered HTML content
@@ -760,7 +798,9 @@ def render_html_template(commit_count, follower_count, github_username, twitter_
         youtube_channel_id=youtube_channel_id or "",
         bluesky_username=bluesky_username or "",
         last_updated=current_date,
-        historical_data_json=historical_data_json
+        historical_data_json=historical_data_json,
+        commits_today=commits_today,
+        followers_today=followers_today
     )
     
     return html_content 
