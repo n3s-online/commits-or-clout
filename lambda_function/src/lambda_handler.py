@@ -168,7 +168,7 @@ def get_commits_since_jan_1(username, token):
         "Accept": "application/vnd.github+json",
         "X-GitHub-Api-Version": "2022-11-28",
     }
-    params = {"since": since, "per_page": 100}  # Increase page size and add pagination
+    params = {"since": since, "per_page": 100, "author": username} 
     total_commits = 0
     
     try:
