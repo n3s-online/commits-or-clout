@@ -5,7 +5,18 @@ This directory contains the AWS Lambda function code.
 ## Structure
 
 - `src/lambda_handler.py`: The main Lambda function handler
+- `src/generate_historical_data.py`: Script to generate historical data
+- `src/utils.py`: Utility functions for HTML rendering
+- `src/bluesky_utils.py`: Functions for interacting with the Bluesky API
+- `src/youtube_utils.py`: Functions for fetching YouTube subscriber counts
 - `requirements.txt`: Python dependencies for the Lambda function
+
+## Features
+
+- Fetches GitHub commits from all branches across all repositories
+- Counts unique commits to avoid duplicates when the same commit appears in multiple branches
+- Tracks historical data for commits and social media followers
+- Generates a ratio of commits to social media followers
 
 ## Development
 
@@ -38,4 +49,4 @@ This directory contains the AWS Lambda function code.
 
 ## Deployment
 
-This Lambda function is deployed using the CDK application in the `cdk_deployment` directory. 
+This Lambda function is deployed using the CDK application in the `cdk_deployment` directory.
