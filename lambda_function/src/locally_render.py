@@ -6,7 +6,7 @@ import os
 import sys
 import json
 from datetime import datetime, timedelta
-from utils import render_html_template
+from utils import render_html_template, calculate_weekly_activity
 
 def generate_fake_historical_data(days=28):
     """
@@ -82,6 +82,11 @@ def main():
         commits_today = commit_count - yesterday_entry["github_commits"]
         followers_today = total_followers - yesterday_entry["total_followers"]
 
+    # Calculate weekly activity
+    weekly_activity = calculate_weekly_activity(historical_data)
+    commits_week = weekly_activity["commits_week"]
+    followers_week = weekly_activity["followers_week"]
+
     # Set usernames and channel ID
     github_username = "n3s-online"
     twitter_username = "N3sOnline"
@@ -101,6 +106,8 @@ def main():
           f"YouTube Subscribers: {youtube_subscribers}, "
           f"Total Followers: {total_followers}, "
           f"Bluesky Followers: {bluesky_followers}")
+    print(f"Daily activity: +{commits_today} commits, +{followers_today} followers")
+    print(f"Weekly activity: +{commits_week} commits, +{followers_week} followers")
     
     # Render the HTML template with historical data
     html_content = render_html_template(
@@ -112,7 +119,9 @@ def main():
         youtube_channel_id=youtube_channel_id,
         bluesky_username=bluesky_username,
         commits_today=commits_today,
-        followers_today=followers_today
+        followers_today=followers_today,
+        commits_week=commits_week,
+        followers_week=followers_week
     )
     
     # Write to index.html file

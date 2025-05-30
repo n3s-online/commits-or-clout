@@ -7,7 +7,7 @@ import boto3
 from datetime import datetime, timezone
 from jinja2 import Environment, FileSystemLoader, Template
 import pytz
-from utils import get_html_template, render_html_template  # Import the utility functions
+from utils import get_html_template, render_html_template, calculate_weekly_activity  # Import the utility functions
 from youtube_utils import get_youtube_subscriber_count  # Import the YouTube utility function
 from bluesky_utils import BlueskyHelper  # Import the Bluesky utility class
 from botocore.exceptions import ClientError
@@ -583,6 +583,13 @@ def handler(event, context):
         else:
             logger.info("No previous data available to calculate daily changes")
 
+        # Calculate weekly activity
+        logger.info("Calculating weekly activity...")
+        weekly_activity = calculate_weekly_activity(updated_historical_data)
+        commits_week = weekly_activity["commits_week"]
+        followers_week = weekly_activity["followers_week"]
+        logger.info(f"Weekly changes: +{commits_week} commits, +{followers_week} followers")
+
         # Use the render_html_template function from utils.py with historical data
         logger.info("Rendering HTML template...")
         render_start = time.time()
@@ -595,7 +602,9 @@ def handler(event, context):
             YOUTUBE_CHANNEL_ID,  # Pass the YouTube channel ID
             BLUESKY_USERNAME,  # Pass the Bluesky username
             commits_today,  # Pass the commits made today
-            followers_today  # Pass the followers gained today
+            followers_today,  # Pass the followers gained today
+            commits_week,  # Pass the commits made this week
+            followers_week  # Pass the followers gained this week
         )
         logger.info(f"HTML template rendered in {time.time() - render_start:.2f} seconds")
 
@@ -656,6 +665,8 @@ def handler(event, context):
                 'ratio': ratio,
                 'commits_today': commits_today,
                 'followers_today': followers_today,
+                'commits_week': commits_week,
+                'followers_week': followers_week,
                 'execution_time_seconds': total_execution_time
             })
         }
