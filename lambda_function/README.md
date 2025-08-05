@@ -72,6 +72,33 @@ To fetch GitHub commits and repository data, you'll need to set up a GitHub Pers
    - This is typically handled through the CDK deployment configuration
    - Never commit the actual token value to your repository
 
+### GitHub Organization Support
+
+The application now supports fetching repositories from both your personal GitHub account and a GitHub organization. This allows you to track commits across all repositories you have access to.
+
+**Configuration:**
+- Set the `GITHUB_ORGANIZATION` environment variable to your organization name
+- The GitHub token must have appropriate permissions to access organization repositories
+- Required token scopes:
+  - `repo` - for accessing repository data
+  - `read:org` - for accessing organization repositories
+
+**How it works:**
+- The application fetches repositories from both your personal account (`/user/repos`) and the specified organization (`/orgs/{org}/repos`)
+- All commits are filtered by your GitHub username using the `author` parameter
+- This ensures only your commits are counted, even from organization repositories
+
+**Example:**
+```bash
+export GITHUB_ORGANIZATION="your-org-name"
+```
+
+**AWS Parameter Store:**
+For production deployment, add the organization name to AWS Systems Manager Parameter Store:
+```bash
+aws ssm put-parameter --name "/commits-or-clout/github-organization" --type "String" --value "your-org-name"
+```
+
 ### Lambda Development
 
 1. Add your Lambda function logic in `src/lambda_handler.py`

@@ -38,6 +38,8 @@ def get_parameter(param_name, with_decryption=True):
 # Environment variables for parameter names
 GITHUB_TOKEN_PARAM_NAME = os.environ.get("GITHUB_TOKEN_PARAM_NAME")
 GITHUB_USERNAME_PARAM_NAME = os.environ.get("GITHUB_USERNAME_PARAM_NAME")
+GITHUB_ORGANIZATION_PARAM_NAME = os.environ.get("GITHUB_ORGANIZATION_PARAM_NAME")
+GITHUB_TOKEN_ORG_PARAM_NAME = os.environ.get("GITHUB_TOKEN_ORG_PARAM_NAME")
 TWITTER_BEARER_TOKEN_PARAM_NAME = os.environ.get("TWITTER_BEARER_TOKEN_PARAM_NAME")
 TWITTER_USERNAME_PARAM_NAME = os.environ.get("TWITTER_USERNAME_PARAM_NAME")
 DISCORD_WEBHOOK_URL_PARAM_NAME = os.environ.get("DISCORD_WEBHOOK_URL_PARAM_NAME")
@@ -54,12 +56,16 @@ SSM_PARAM_NAME = os.environ.get('SSM_PARAM_NAME', '/commits-or-clout/historical-
 
 # Default values from environment variables
 GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME", "")
+GITHUB_ORGANIZATION = os.environ.get("GITHUB_ORGANIZATION", "")
+GITHUB_TOKEN_ORG = os.environ.get("GITHUB_TOKEN_ORG", "")
 TWITTER_USERNAME = os.environ.get("TWITTER_USERNAME", "")
 YOUTUBE_CHANNEL_ID = os.environ.get("YOUTUBE_CHANNEL_ID", "")
 
 # Retrieve actual values from Parameter Store
 GITHUB_TOKEN = get_parameter(GITHUB_TOKEN_PARAM_NAME) or os.environ.get("GITHUB_TOKEN", "")
 GITHUB_USERNAME = get_parameter(GITHUB_USERNAME_PARAM_NAME, False) or GITHUB_USERNAME
+GITHUB_ORGANIZATION = get_parameter(GITHUB_ORGANIZATION_PARAM_NAME, False) or GITHUB_ORGANIZATION
+GITHUB_TOKEN_ORG = get_parameter(GITHUB_TOKEN_ORG_PARAM_NAME) or GITHUB_TOKEN_ORG
 TWITTER_USERNAME = get_parameter(TWITTER_USERNAME_PARAM_NAME, False) or TWITTER_USERNAME
 TWITTER_BEARER_TOKEN = get_parameter(TWITTER_BEARER_TOKEN_PARAM_NAME) or os.environ.get("TWITTER_BEARER_TOKEN", "")
 DISCORD_WEBHOOK_URL = get_parameter(DISCORD_WEBHOOK_URL_PARAM_NAME, False) or os.environ.get("DISCORD_WEBHOOK_URL", "")
@@ -161,6 +167,84 @@ def get_user_repositories(username, token):
         return []
 
 
+def get_organization_repositories(organization, token):
+    """
+    Fetch all repositories for a GitHub organization.
+    """
+    url = f"https://api.github.com/orgs/{organization}/repos"
+    headers = {
+        "Authorization": f"Bearer {token}",
+        "Accept": "application/vnd.github+json",
+        "X-GitHub-Api-Version": "2022-11-28",
+    }
+    params = {
+        "per_page": 100,
+        "type": "all",
+    }
+    all_repos = []
+
+    try:
+        page = 1
+        while True:
+            params["page"] = page
+            response = requests.get(url, headers=headers, params=params)
+            logger.info(f"Organization API Response Status: {response.status_code}")
+
+            response.raise_for_status()
+            repos = response.json()
+
+            if not repos:  # No more repositories
+                break
+
+            all_repos.extend(repos)
+            logger.info(f"Fetched page {page} with {len(repos)} organization repositories")
+
+            # Check if there's a next page using Link header
+            if "Link" in response.headers:
+                if 'rel="next"' not in response.headers["Link"]:
+                    break
+            else:
+                # If no Link header and we got less than per_page results, we're done
+                if len(repos) < params["per_page"]:
+                    break
+
+            page += 1
+
+        logger.info(f"Found {len(all_repos)} repositories for organization {organization}")
+        return all_repos
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching organization repositories: {e}")
+        logger.error(
+            f"Response content: {e.response.content if hasattr(e, 'response') else 'No response'}"
+        )
+        return []
+
+
+def get_all_repositories(username, user_token, organization=None, org_token=None):
+    """
+    Fetch all repositories from both user account and organization (if specified).
+    Uses appropriate tokens for each type of repository.
+    Returns a combined list of repositories.
+    """
+    all_repos = []
+
+    # Get user repositories using user token
+    user_repos = get_user_repositories(username, user_token)
+    all_repos.extend(user_repos)
+    logger.info(f"Added {len(user_repos)} user repositories")
+
+    # Get organization repositories if organization is specified
+    if organization:
+        # Use organization token if provided, otherwise fall back to user token
+        token_to_use = org_token if org_token else user_token
+        org_repos = get_organization_repositories(organization, token_to_use)
+        all_repos.extend(org_repos)
+        logger.info(f"Added {len(org_repos)} organization repositories")
+
+    logger.info(f"Total repositories: {len(all_repos)}")
+    return all_repos
+
+
 def get_commits_since_jan_1(username, token):
     """
     Fetch the number of commits made to all GitHub repositories since January 1st across all branches.
@@ -168,22 +252,32 @@ def get_commits_since_jan_1(username, token):
     """
     current_year = datetime.now().year
     since = datetime(current_year, 1, 1, tzinfo=timezone.utc).isoformat()
-    headers = {
-        "Authorization": f"Bearer {token}",
-        "Accept": "application/vnd.github+json",
-        "X-GitHub-Api-Version": "2022-11-28",
-    }
 
     # Use a set to track unique commit SHAs to avoid counting duplicates
     unique_commits = set()
 
     try:
-        # First get all repositories
-        repositories = get_user_repositories(username, token)
+        # First get all repositories (user + organization) using appropriate tokens
+        repositories = get_all_repositories(username, token, GITHUB_ORGANIZATION, GITHUB_TOKEN_ORG)
 
         for repo in repositories:
             repo_name = repo['name']
             repo_owner = repo['owner']['login']
+
+            # Determine which token to use based on repository owner
+            if repo_owner == GITHUB_ORGANIZATION and GITHUB_TOKEN_ORG:
+                repo_token = GITHUB_TOKEN_ORG
+                logger.info(f"Using organization token for repo {repo_owner}/{repo_name}")
+            else:
+                repo_token = token
+                logger.info(f"Using user token for repo {repo_owner}/{repo_name}")
+
+            # Create headers with the appropriate token
+            repo_headers = {
+                "Authorization": f"Bearer {repo_token}",
+                "Accept": "application/vnd.github+json",
+                "X-GitHub-Api-Version": "2022-11-28",
+            }
 
             # First get all branches for this repository
             branches_url = f"https://api.github.com/repos/{repo_owner}/{repo_name}/branches"
@@ -195,7 +289,7 @@ def get_commits_since_jan_1(username, token):
                 branches_page = 1
                 while True:
                     branches_params["page"] = branches_page
-                    branches_response = requests.get(branches_url, headers=headers, params=branches_params)
+                    branches_response = requests.get(branches_url, headers=repo_headers, params=branches_params)
                     branches_response.raise_for_status()
                     page_branches = branches_response.json()
 
@@ -238,7 +332,7 @@ def get_commits_since_jan_1(username, token):
                         commits_page = 1
                         while True:
                             commits_params["page"] = commits_page
-                            commits_response = requests.get(commits_url, headers=headers, params=commits_params)
+                            commits_response = requests.get(commits_url, headers=repo_headers, params=commits_params)
                             commits_response.raise_for_status()
                             commits = commits_response.json()
 

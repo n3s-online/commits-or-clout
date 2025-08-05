@@ -112,6 +112,8 @@ class CommitsOrCloutStack(Stack):
         # cli command to create these parameters: aws ssm put-parameter --name "" --type "SecureString" --value ""
         github_token_param_name = "/commits-or-clout/github-token"
         github_username_param_name = "/commits-or-clout/github-username"
+        github_organization_param_name = "/commits-or-clout/github-organization"
+        github_token_org_param_name = "/commits-or-clout/github-token-org"
         twitter_bearer_token_param_name = "/commits-or-clout/twitter-bearer-token"
         twitter_username_param_name = "/commits-or-clout/twitter-username"
         discord_webhook_url_param_name = "/commits-or-clout/discord-webhook-url"
@@ -141,6 +143,8 @@ class CommitsOrCloutStack(Stack):
                 "S3_HISTORY_KEY": "historical_data.json",
                 "GITHUB_TOKEN_PARAM_NAME": github_token_param_name,
                 "GITHUB_USERNAME_PARAM_NAME": github_username_param_name,
+                "GITHUB_ORGANIZATION_PARAM_NAME": github_organization_param_name,
+                "GITHUB_TOKEN_ORG_PARAM_NAME": github_token_org_param_name,
                 "TWITTER_BEARER_TOKEN_PARAM_NAME": twitter_bearer_token_param_name,
                 "TWITTER_USERNAME_PARAM_NAME": twitter_username_param_name,
                 "DISCORD_WEBHOOK_URL_PARAM_NAME": discord_webhook_url_param_name,
@@ -160,6 +164,8 @@ class CommitsOrCloutStack(Stack):
                 resources=[
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{github_token_param_name.lstrip('/')}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{github_username_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{github_organization_param_name.lstrip('/')}",
+                    f"arn:aws:ssm:{self.region}:{self.account}:parameter/{github_token_org_param_name.lstrip('/')}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{twitter_bearer_token_param_name.lstrip('/')}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{twitter_username_param_name.lstrip('/')}",
                     f"arn:aws:ssm:{self.region}:{self.account}:parameter/{discord_webhook_url_param_name.lstrip('/')}",
