@@ -1,0 +1,1514 @@
+{
+  "data": [
+    {
+      "date": "2025-01-01",
+      "github_commits": 1,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.0,
+      "last_updated": "2025-05-06T11:21:26.290146-07:00"
+    },
+    {
+      "date": "2025-01-02",
+      "github_commits": 2,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.0,
+      "last_updated": "2025-05-06T11:21:26.290215-07:00"
+    },
+    {
+      "date": "2025-01-03",
+      "github_commits": 3,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.0,
+      "last_updated": "2025-05-06T11:21:26.290225-07:00"
+    },
+    {
+      "date": "2025-01-04",
+      "github_commits": 3,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.0,
+      "last_updated": "2025-05-06T11:21:26.290232-07:00"
+    },
+    {
+      "date": "2025-01-05",
+      "github_commits": 8,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.1,
+      "last_updated": "2025-05-06T11:21:26.290238-07:00"
+    },
+    {
+      "date": "2025-01-06",
+      "github_commits": 10,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.1,
+      "last_updated": "2025-05-06T11:21:26.290244-07:00"
+    },
+    {
+      "date": "2025-01-07",
+      "github_commits": 11,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.2,
+      "last_updated": "2025-05-06T11:21:26.290251-07:00"
+    },
+    {
+      "date": "2025-01-08",
+      "github_commits": 12,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.2,
+      "last_updated": "2025-05-06T11:21:26.290257-07:00"
+    },
+    {
+      "date": "2025-01-09",
+      "github_commits": 13,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.2,
+      "last_updated": "2025-05-06T11:21:26.290263-07:00"
+    },
+    {
+      "date": "2025-01-10",
+      "github_commits": 19,
+      "twitter_followers": 25,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 69,
+      "ratio": 0.3,
+      "last_updated": "2025-05-06T11:21:26.290269-07:00"
+    },
+    {
+      "date": "2025-01-11",
+      "github_commits": 21,
+      "twitter_followers": 26,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 70,
+      "ratio": 0.3,
+      "last_updated": "2025-05-06T11:21:26.290275-07:00"
+    },
+    {
+      "date": "2025-01-12",
+      "github_commits": 31,
+      "twitter_followers": 26,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 70,
+      "ratio": 0.4,
+      "last_updated": "2025-05-06T11:21:26.290282-07:00"
+    },
+    {
+      "date": "2025-01-13",
+      "github_commits": 64,
+      "twitter_followers": 26,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 70,
+      "ratio": 0.9,
+      "last_updated": "2025-05-06T11:21:26.290288-07:00"
+    },
+    {
+      "date": "2025-01-14",
+      "github_commits": 98,
+      "twitter_followers": 26,
+      "youtube_subscribers": 44,
+      "bluesky_followers": 0,
+      "total_followers": 70,
+      "ratio": 1.4,
+      "last_updated": "2025-05-06T11:21:26.290294-07:00"
+    },
+    {
+      "date": "2025-01-15",
+      "github_commits": 112,
+      "twitter_followers": 26,
+      "youtube_subscribers": 45,
+      "bluesky_followers": 0,
+      "total_followers": 71,
+      "ratio": 1.6,
+      "last_updated": "2025-05-06T11:21:26.290300-07:00"
+    },
+    {
+      "date": "2025-01-16",
+      "github_commits": 116,
+      "twitter_followers": 26,
+      "youtube_subscribers": 45,
+      "bluesky_followers": 0,
+      "total_followers": 71,
+      "ratio": 1.6,
+      "last_updated": "2025-05-06T11:21:26.290306-07:00"
+    },
+    {
+      "date": "2025-01-17",
+      "github_commits": 143,
+      "twitter_followers": 27,
+      "youtube_subscribers": 45,
+      "bluesky_followers": 0,
+      "total_followers": 72,
+      "ratio": 2.0,
+      "last_updated": "2025-05-06T11:21:26.290312-07:00"
+    },
+    {
+      "date": "2025-01-18",
+      "github_commits": 159,
+      "twitter_followers": 27,
+      "youtube_subscribers": 45,
+      "bluesky_followers": 0,
+      "total_followers": 72,
+      "ratio": 2.2,
+      "last_updated": "2025-05-06T11:21:26.290333-07:00"
+    },
+    {
+      "date": "2025-01-19",
+      "github_commits": 164,
+      "twitter_followers": 27,
+      "youtube_subscribers": 45,
+      "bluesky_followers": 0,
+      "total_followers": 72,
+      "ratio": 2.3,
+      "last_updated": "2025-05-06T11:21:26.290343-07:00"
+    },
+    {
+      "date": "2025-01-20",
+      "github_commits": 172,
+      "twitter_followers": 27,
+      "youtube_subscribers": 45,
+      "bluesky_followers": 0,
+      "total_followers": 72,
+      "ratio": 2.4,
+      "last_updated": "2025-05-06T11:21:26.290350-07:00"
+    },
+    {
+      "date": "2025-01-21",
+      "github_commits": 172,
+      "twitter_followers": 27,
+      "youtube_subscribers": 45,
+      "bluesky_followers": 0,
+      "total_followers": 72,
+      "ratio": 2.4,
+      "last_updated": "2025-05-06T11:21:26.290355-07:00"
+    },
+    {
+      "date": "2025-01-22",
+      "github_commits": 174,
+      "twitter_followers": 27,
+      "youtube_subscribers": 45,
+      "bluesky_followers": 0,
+      "total_followers": 72,
+      "ratio": 2.4,
+      "last_updated": "2025-05-06T11:21:26.290361-07:00"
+    },
+    {
+      "date": "2025-01-23",
+      "github_commits": 196,
+      "twitter_followers": 27,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 75,
+      "ratio": 2.6,
+      "last_updated": "2025-05-06T11:21:26.290367-07:00"
+    },
+    {
+      "date": "2025-01-24",
+      "github_commits": 197,
+      "twitter_followers": 27,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 75,
+      "ratio": 2.6,
+      "last_updated": "2025-05-06T11:21:26.290374-07:00"
+    },
+    {
+      "date": "2025-01-25",
+      "github_commits": 214,
+      "twitter_followers": 27,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 75,
+      "ratio": 2.9,
+      "last_updated": "2025-05-06T11:21:26.290381-07:00"
+    },
+    {
+      "date": "2025-01-26",
+      "github_commits": 214,
+      "twitter_followers": 27,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 75,
+      "ratio": 2.9,
+      "last_updated": "2025-05-06T11:21:26.290427-07:00"
+    },
+    {
+      "date": "2025-01-27",
+      "github_commits": 214,
+      "twitter_followers": 27,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 75,
+      "ratio": 2.9,
+      "last_updated": "2025-05-06T11:21:26.290434-07:00"
+    },
+    {
+      "date": "2025-01-28",
+      "github_commits": 217,
+      "twitter_followers": 27,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 75,
+      "ratio": 2.9,
+      "last_updated": "2025-05-06T11:21:26.290441-07:00"
+    },
+    {
+      "date": "2025-01-29",
+      "github_commits": 217,
+      "twitter_followers": 27,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 75,
+      "ratio": 2.9,
+      "last_updated": "2025-05-06T11:21:26.290446-07:00"
+    },
+    {
+      "date": "2025-01-30",
+      "github_commits": 228,
+      "twitter_followers": 27,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 75,
+      "ratio": 3.0,
+      "last_updated": "2025-05-06T11:21:26.290453-07:00"
+    },
+    {
+      "date": "2025-01-31",
+      "github_commits": 234,
+      "twitter_followers": 27,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 75,
+      "ratio": 3.1,
+      "last_updated": "2025-05-06T11:21:26.290460-07:00"
+    },
+    {
+      "date": "2025-02-01",
+      "github_commits": 238,
+      "twitter_followers": 28,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 76,
+      "ratio": 3.1,
+      "last_updated": "2025-05-06T11:21:26.290466-07:00"
+    },
+    {
+      "date": "2025-02-02",
+      "github_commits": 239,
+      "twitter_followers": 28,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 76,
+      "ratio": 3.1,
+      "last_updated": "2025-05-06T11:21:26.290472-07:00"
+    },
+    {
+      "date": "2025-02-03",
+      "github_commits": 252,
+      "twitter_followers": 28,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 76,
+      "ratio": 3.3,
+      "last_updated": "2025-05-06T11:21:26.290478-07:00"
+    },
+    {
+      "date": "2025-02-04",
+      "github_commits": 275,
+      "twitter_followers": 28,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 76,
+      "ratio": 3.6,
+      "last_updated": "2025-05-06T11:21:26.290483-07:00"
+    },
+    {
+      "date": "2025-02-05",
+      "github_commits": 279,
+      "twitter_followers": 29,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 77,
+      "ratio": 3.6,
+      "last_updated": "2025-05-06T11:21:26.290489-07:00"
+    },
+    {
+      "date": "2025-02-06",
+      "github_commits": 283,
+      "twitter_followers": 29,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 77,
+      "ratio": 3.7,
+      "last_updated": "2025-05-06T11:21:26.290494-07:00"
+    },
+    {
+      "date": "2025-02-07",
+      "github_commits": 283,
+      "twitter_followers": 29,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 77,
+      "ratio": 3.7,
+      "last_updated": "2025-05-06T11:21:26.290500-07:00"
+    },
+    {
+      "date": "2025-02-08",
+      "github_commits": 283,
+      "twitter_followers": 29,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 77,
+      "ratio": 3.7,
+      "last_updated": "2025-05-06T11:21:26.290515-07:00"
+    },
+    {
+      "date": "2025-02-09",
+      "github_commits": 283,
+      "twitter_followers": 29,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 77,
+      "ratio": 3.7,
+      "last_updated": "2025-05-06T11:21:26.290521-07:00"
+    },
+    {
+      "date": "2025-02-10",
+      "github_commits": 283,
+      "twitter_followers": 29,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 77,
+      "ratio": 3.7,
+      "last_updated": "2025-05-06T11:21:26.290527-07:00"
+    },
+    {
+      "date": "2025-02-11",
+      "github_commits": 283,
+      "twitter_followers": 29,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 77,
+      "ratio": 3.7,
+      "last_updated": "2025-05-06T11:21:26.290533-07:00"
+    },
+    {
+      "date": "2025-02-12",
+      "github_commits": 283,
+      "twitter_followers": 32,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 80,
+      "ratio": 3.5,
+      "last_updated": "2025-05-06T11:21:26.290538-07:00"
+    },
+    {
+      "date": "2025-02-13",
+      "github_commits": 286,
+      "twitter_followers": 32,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 80,
+      "ratio": 3.6,
+      "last_updated": "2025-05-06T11:21:26.290544-07:00"
+    },
+    {
+      "date": "2025-02-14",
+      "github_commits": 286,
+      "twitter_followers": 32,
+      "youtube_subscribers": 48,
+      "bluesky_followers": 0,
+      "total_followers": 80,
+      "ratio": 3.6,
+      "last_updated": "2025-05-06T11:21:26.290549-07:00"
+    },
+    {
+      "date": "2025-02-15",
+      "github_commits": 286,
+      "twitter_followers": 32,
+      "youtube_subscribers": 49,
+      "bluesky_followers": 0,
+      "total_followers": 81,
+      "ratio": 3.5,
+      "last_updated": "2025-05-06T11:21:26.290555-07:00"
+    },
+    {
+      "date": "2025-02-16",
+      "github_commits": 286,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 3.5,
+      "last_updated": "2025-05-06T11:21:26.290560-07:00"
+    },
+    {
+      "date": "2025-02-17",
+      "github_commits": 288,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 3.5,
+      "last_updated": "2025-05-06T11:21:26.290565-07:00"
+    },
+    {
+      "date": "2025-02-18",
+      "github_commits": 290,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 3.5,
+      "last_updated": "2025-05-06T11:21:26.290571-07:00"
+    },
+    {
+      "date": "2025-02-19",
+      "github_commits": 290,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 3.5,
+      "last_updated": "2025-05-06T11:21:26.290576-07:00"
+    },
+    {
+      "date": "2025-02-20",
+      "github_commits": 295,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 3.6,
+      "last_updated": "2025-05-06T11:21:26.290582-07:00"
+    },
+    {
+      "date": "2025-02-21",
+      "github_commits": 306,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 3.7,
+      "last_updated": "2025-05-06T11:21:26.290588-07:00"
+    },
+    {
+      "date": "2025-02-22",
+      "github_commits": 310,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 3.8,
+      "last_updated": "2025-05-06T11:21:26.290603-07:00"
+    },
+    {
+      "date": "2025-02-23",
+      "github_commits": 310,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 3.8,
+      "last_updated": "2025-05-06T11:21:26.290610-07:00"
+    },
+    {
+      "date": "2025-02-24",
+      "github_commits": 349,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 4.3,
+      "last_updated": "2025-05-06T11:21:26.290616-07:00"
+    },
+    {
+      "date": "2025-02-25",
+      "github_commits": 385,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 4.7,
+      "last_updated": "2025-05-06T11:21:26.290622-07:00"
+    },
+    {
+      "date": "2025-02-26",
+      "github_commits": 409,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 5.0,
+      "last_updated": "2025-05-06T11:21:26.290628-07:00"
+    },
+    {
+      "date": "2025-02-27",
+      "github_commits": 444,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 5.4,
+      "last_updated": "2025-05-06T11:21:26.290633-07:00"
+    },
+    {
+      "date": "2025-02-28",
+      "github_commits": 475,
+      "twitter_followers": 32,
+      "youtube_subscribers": 50,
+      "bluesky_followers": 0,
+      "total_followers": 82,
+      "ratio": 5.8,
+      "last_updated": "2025-05-06T11:21:26.290639-07:00"
+    },
+    {
+      "date": "2025-03-01",
+      "github_commits": 479,
+      "twitter_followers": 32,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 0,
+      "total_followers": 83,
+      "ratio": 5.8,
+      "last_updated": "2025-05-06T11:21:26.290645-07:00"
+    },
+    {
+      "date": "2025-03-02",
+      "github_commits": 494,
+      "twitter_followers": 35,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 0,
+      "total_followers": 86,
+      "ratio": 5.7,
+      "last_updated": "2025-05-06T11:21:26.290650-07:00"
+    },
+    {
+      "date": "2025-03-03",
+      "github_commits": 510,
+      "twitter_followers": 35,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 88,
+      "ratio": 5.8,
+      "last_updated": "2025-05-06T11:21:26.290656-07:00"
+    },
+    {
+      "date": "2025-03-04",
+      "github_commits": 535,
+      "twitter_followers": 39,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 92,
+      "ratio": 5.8,
+      "last_updated": "2025-05-06T11:21:26.290662-07:00"
+    },
+    {
+      "date": "2025-03-05",
+      "github_commits": 555,
+      "twitter_followers": 41,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 94,
+      "ratio": 5.9,
+      "last_updated": "2025-05-06T11:21:26.290667-07:00"
+    },
+    {
+      "date": "2025-03-06",
+      "github_commits": 573,
+      "twitter_followers": 42,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 95,
+      "ratio": 6.0,
+      "last_updated": "2025-05-06T11:21:26.290673-07:00"
+    },
+    {
+      "date": "2025-03-07",
+      "github_commits": 635,
+      "twitter_followers": 42,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 95,
+      "ratio": 6.7,
+      "last_updated": "2025-05-06T11:21:26.290680-07:00"
+    },
+    {
+      "date": "2025-03-08",
+      "github_commits": 638,
+      "twitter_followers": 43,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 96,
+      "ratio": 6.6,
+      "last_updated": "2025-05-06T11:21:26.290686-07:00"
+    },
+    {
+      "date": "2025-03-09",
+      "github_commits": 675,
+      "twitter_followers": 42,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 95,
+      "ratio": 7.1,
+      "last_updated": "2025-05-06T11:21:26.290692-07:00"
+    },
+    {
+      "date": "2025-03-10",
+      "github_commits": 686,
+      "twitter_followers": 42,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 95,
+      "ratio": 7.2,
+      "last_updated": "2025-05-06T11:21:26.290697-07:00"
+    },
+    {
+      "date": "2025-03-11",
+      "github_commits": 705,
+      "twitter_followers": 43,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 96,
+      "ratio": 7.3,
+      "last_updated": "2025-05-06T11:21:26.290710-07:00"
+    },
+    {
+      "date": "2025-03-12",
+      "github_commits": 742,
+      "twitter_followers": 45,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 1,
+      "total_followers": 98,
+      "ratio": 7.6,
+      "last_updated": "2025-05-06T11:21:26.290716-07:00"
+    },
+    {
+      "date": "2025-03-13",
+      "github_commits": 767,
+      "twitter_followers": 45,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 3,
+      "total_followers": 100,
+      "ratio": 7.7,
+      "last_updated": "2025-05-06T11:21:26.290722-07:00"
+    },
+    {
+      "date": "2025-03-14",
+      "github_commits": 769,
+      "twitter_followers": 47,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 101,
+      "ratio": 7.6,
+      "last_updated": "2025-05-06T11:21:26.290727-07:00"
+    },
+    {
+      "date": "2025-03-15",
+      "github_commits": 769,
+      "twitter_followers": 47,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 101,
+      "ratio": 7.6,
+      "last_updated": "2025-05-06T11:21:26.290733-07:00"
+    },
+    {
+      "date": "2025-03-16",
+      "github_commits": 789,
+      "twitter_followers": 48,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 102,
+      "ratio": 7.7,
+      "last_updated": "2025-05-06T11:21:26.290738-07:00"
+    },
+    {
+      "date": "2025-03-17",
+      "github_commits": 791,
+      "twitter_followers": 50,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 104,
+      "ratio": 7.6,
+      "last_updated": "2025-05-06T11:21:26.290744-07:00"
+    },
+    {
+      "date": "2025-03-18",
+      "github_commits": 805,
+      "twitter_followers": 51,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 105,
+      "ratio": 7.7,
+      "last_updated": "2025-05-06T11:21:26.290749-07:00"
+    },
+    {
+      "date": "2025-03-19",
+      "github_commits": 811,
+      "twitter_followers": 50,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 104,
+      "ratio": 7.8,
+      "last_updated": "2025-05-06T11:21:26.290756-07:00"
+    },
+    {
+      "date": "2025-03-20",
+      "github_commits": 811,
+      "twitter_followers": 51,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 105,
+      "ratio": 7.7,
+      "last_updated": "2025-05-06T11:21:26.290763-07:00"
+    },
+    {
+      "date": "2025-03-21",
+      "github_commits": 818,
+      "twitter_followers": 52,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 106,
+      "ratio": 7.7,
+      "last_updated": "2025-05-06T11:21:26.290768-07:00"
+    },
+    {
+      "date": "2025-03-22",
+      "github_commits": 886,
+      "twitter_followers": 58,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 112,
+      "ratio": 7.9,
+      "last_updated": "2025-05-06T11:21:26.290774-07:00"
+    },
+    {
+      "date": "2025-03-23",
+      "github_commits": 899,
+      "twitter_followers": 58,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 112,
+      "ratio": 8.0,
+      "last_updated": "2025-05-06T11:21:26.290779-07:00"
+    },
+    {
+      "date": "2025-03-24",
+      "github_commits": 964,
+      "twitter_followers": 58,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 112,
+      "ratio": 8.6,
+      "last_updated": "2025-05-06T11:21:26.290785-07:00"
+    },
+    {
+      "date": "2025-03-25",
+      "github_commits": 1076,
+      "twitter_followers": 59,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 113,
+      "ratio": 9.5,
+      "last_updated": "2025-05-06T11:21:26.290790-07:00"
+    },
+    {
+      "date": "2025-03-26",
+      "github_commits": 1090,
+      "twitter_followers": 56,
+      "youtube_subscribers": 51,
+      "bluesky_followers": 3,
+      "total_followers": 110,
+      "ratio": 9.9,
+      "last_updated": "2025-05-06T11:21:26.290796-07:00"
+    },
+    {
+      "date": "2025-03-27",
+      "github_commits": 1095,
+      "twitter_followers": 56,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 4,
+      "total_followers": 112,
+      "ratio": 9.8,
+      "last_updated": "2025-05-06T11:21:26.290801-07:00"
+    },
+    {
+      "date": "2025-03-28",
+      "github_commits": 1134,
+      "twitter_followers": 59,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 4,
+      "total_followers": 115,
+      "ratio": 9.9,
+      "last_updated": "2025-05-06T11:21:26.290806-07:00"
+    },
+    {
+      "date": "2025-03-29",
+      "github_commits": 1145,
+      "twitter_followers": 58,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 4,
+      "total_followers": 114,
+      "ratio": 10.0,
+      "last_updated": "2025-05-06T11:21:26.290812-07:00"
+    },
+    {
+      "date": "2025-03-30",
+      "github_commits": 1159,
+      "twitter_followers": 57,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 3,
+      "total_followers": 112,
+      "ratio": 10.3,
+      "last_updated": "2025-05-06T11:21:26.290817-07:00"
+    },
+    {
+      "date": "2025-03-31",
+      "github_commits": 1174,
+      "twitter_followers": 58,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 3,
+      "total_followers": 113,
+      "ratio": 10.4,
+      "last_updated": "2025-05-06T11:21:26.290823-07:00"
+    },
+    {
+      "date": "2025-04-01",
+      "github_commits": 1187,
+      "twitter_followers": 59,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 3,
+      "total_followers": 114,
+      "ratio": 10.4,
+      "last_updated": "2025-05-06T11:21:26.290828-07:00"
+    },
+    {
+      "date": "2025-04-02",
+      "github_commits": 1200,
+      "twitter_followers": 59,
+      "youtube_subscribers": 52,
+      "bluesky_followers": 3,
+      "total_followers": 114,
+      "ratio": 10.5,
+      "last_updated": "2025-05-06T11:21:26.290834-07:00"
+    },
+    {
+      "date": "2025-04-03",
+      "github_commits": 1209,
+      "twitter_followers": 59,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 3,
+      "total_followers": 115,
+      "ratio": 10.5,
+      "last_updated": "2025-05-06T11:21:26.290839-07:00"
+    },
+    {
+      "date": "2025-04-04",
+      "github_commits": 1211,
+      "twitter_followers": 59,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 3,
+      "total_followers": 115,
+      "ratio": 10.5,
+      "last_updated": "2025-05-06T11:21:26.290846-07:00"
+    },
+    {
+      "date": "2025-04-05",
+      "github_commits": 1211,
+      "twitter_followers": 60,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 3,
+      "total_followers": 116,
+      "ratio": 10.4,
+      "last_updated": "2025-05-06T11:21:26.290851-07:00"
+    },
+    {
+      "date": "2025-04-06",
+      "github_commits": 1211,
+      "twitter_followers": 61,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 3,
+      "total_followers": 117,
+      "ratio": 10.4,
+      "last_updated": "2025-05-06T11:21:26.290857-07:00"
+    },
+    {
+      "date": "2025-04-07",
+      "github_commits": 1217,
+      "twitter_followers": 61,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 3,
+      "total_followers": 117,
+      "ratio": 10.4,
+      "last_updated": "2025-05-06T11:21:26.290863-07:00"
+    },
+    {
+      "date": "2025-04-08",
+      "github_commits": 1225,
+      "twitter_followers": 63,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 3,
+      "total_followers": 119,
+      "ratio": 10.3,
+      "last_updated": "2025-05-06T11:21:26.290868-07:00"
+    },
+    {
+      "date": "2025-04-09",
+      "github_commits": 1251,
+      "twitter_followers": 63,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 12,
+      "total_followers": 128,
+      "ratio": 9.8,
+      "last_updated": "2025-05-06T11:21:26.290873-07:00"
+    },
+    {
+      "date": "2025-04-10",
+      "github_commits": 1254,
+      "twitter_followers": 63,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 11,
+      "total_followers": 127,
+      "ratio": 9.9,
+      "last_updated": "2025-05-06T11:21:26.290879-07:00"
+    },
+    {
+      "date": "2025-04-11",
+      "github_commits": 1256,
+      "twitter_followers": 63,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 11,
+      "total_followers": 127,
+      "ratio": 9.9,
+      "last_updated": "2025-05-06T11:21:26.290885-07:00"
+    },
+    {
+      "date": "2025-04-12",
+      "github_commits": 1259,
+      "twitter_followers": 64,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 11,
+      "total_followers": 128,
+      "ratio": 9.8,
+      "last_updated": "2025-05-06T11:21:26.290898-07:00"
+    },
+    {
+      "date": "2025-04-13",
+      "github_commits": 1259,
+      "twitter_followers": 64,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 11,
+      "total_followers": 128,
+      "ratio": 9.8,
+      "last_updated": "2025-05-06T11:21:26.290903-07:00"
+    },
+    {
+      "date": "2025-04-14",
+      "github_commits": 1280,
+      "twitter_followers": 64,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 11,
+      "total_followers": 128,
+      "ratio": 10.0,
+      "last_updated": "2025-05-06T11:21:26.290909-07:00"
+    },
+    {
+      "date": "2025-04-15",
+      "github_commits": 1291,
+      "twitter_followers": 66,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 12,
+      "total_followers": 131,
+      "ratio": 9.9,
+      "last_updated": "2025-05-06T11:21:26.290915-07:00"
+    },
+    {
+      "date": "2025-04-16",
+      "github_commits": 1302,
+      "twitter_followers": 67,
+      "youtube_subscribers": 53,
+      "bluesky_followers": 14,
+      "total_followers": 134,
+      "ratio": 9.7,
+      "last_updated": "2025-05-06T11:21:26.290920-07:00"
+    },
+    {
+      "date": "2025-04-17",
+      "github_commits": 1310,
+      "twitter_followers": 68,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 14,
+      "total_followers": 140,
+      "ratio": 9.4,
+      "last_updated": "2025-05-06T11:21:26.290926-07:00"
+    },
+    {
+      "date": "2025-04-18",
+      "github_commits": 1337,
+      "twitter_followers": 69,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 15,
+      "total_followers": 142,
+      "ratio": 9.4,
+      "last_updated": "2025-05-06T11:21:26.290932-07:00"
+    },
+    {
+      "date": "2025-04-19",
+      "github_commits": 1337,
+      "twitter_followers": 70,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 15,
+      "total_followers": 143,
+      "ratio": 9.3,
+      "last_updated": "2025-05-06T11:21:26.290937-07:00"
+    },
+    {
+      "date": "2025-04-20",
+      "github_commits": 1354,
+      "twitter_followers": 70,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 15,
+      "total_followers": 143,
+      "ratio": 9.5,
+      "last_updated": "2025-05-06T11:21:26.290943-07:00"
+    },
+    {
+      "date": "2025-04-21",
+      "github_commits": 1362,
+      "twitter_followers": 70,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 16,
+      "total_followers": 144,
+      "ratio": 9.5,
+      "last_updated": "2025-05-06T11:21:26.290949-07:00"
+    },
+    {
+      "date": "2025-04-22",
+      "github_commits": 1368,
+      "twitter_followers": 70,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 16,
+      "total_followers": 144,
+      "ratio": 9.5,
+      "last_updated": "2025-05-06T11:21:26.290954-07:00"
+    },
+    {
+      "date": "2025-04-23",
+      "github_commits": 1380,
+      "twitter_followers": 70,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 17,
+      "total_followers": 145,
+      "ratio": 9.5,
+      "last_updated": "2025-05-06T11:21:26.290960-07:00"
+    },
+    {
+      "date": "2025-04-24",
+      "github_commits": 1389,
+      "twitter_followers": 71,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 17,
+      "total_followers": 146,
+      "ratio": 9.5,
+      "last_updated": "2025-05-06T11:21:26.290965-07:00"
+    },
+    {
+      "date": "2025-04-25",
+      "github_commits": 1393,
+      "twitter_followers": 71,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 17,
+      "total_followers": 146,
+      "ratio": 9.5,
+      "last_updated": "2025-05-06T11:21:26.290971-07:00"
+    },
+    {
+      "date": "2025-04-26",
+      "github_commits": 1393,
+      "twitter_followers": 71,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 17,
+      "total_followers": 146,
+      "ratio": 9.5,
+      "last_updated": "2025-05-06T11:21:26.290977-07:00"
+    },
+    {
+      "date": "2025-04-27",
+      "github_commits": 1398,
+      "twitter_followers": 72,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 17,
+      "total_followers": 147,
+      "ratio": 9.5,
+      "last_updated": "2025-05-06T11:21:26.290982-07:00"
+    },
+    {
+      "date": "2025-04-28",
+      "github_commits": 1404,
+      "twitter_followers": 74,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 18,
+      "total_followers": 150,
+      "ratio": 9.4,
+      "last_updated": "2025-05-06T11:21:26.290988-07:00"
+    },
+    {
+      "date": "2025-04-29",
+      "github_commits": 1422,
+      "twitter_followers": 74,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 19,
+      "total_followers": 152,
+      "ratio": 9.4,
+      "last_updated": "2025-05-06T11:21:26.290993-07:00"
+    },
+    {
+      "date": "2025-04-30",
+      "github_commits": 1431,
+      "twitter_followers": 74,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 21,
+      "total_followers": 154,
+      "ratio": 9.3,
+      "last_updated": "2025-05-06T11:21:26.290999-07:00"
+    },
+    {
+      "date": "2025-05-01",
+      "github_commits": 1442,
+      "twitter_followers": 78,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 21,
+      "total_followers": 158,
+      "ratio": 9.1,
+      "last_updated": "2025-05-06T11:21:26.291004-07:00"
+    },
+    {
+      "date": "2025-05-02",
+      "github_commits": 1448,
+      "twitter_followers": 81,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 23,
+      "total_followers": 163,
+      "ratio": 8.9,
+      "last_updated": "2025-05-06T11:21:26.291010-07:00"
+    },
+    {
+      "date": "2025-05-03",
+      "github_commits": 1450,
+      "twitter_followers": 81,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 23,
+      "total_followers": 163,
+      "ratio": 8.9,
+      "last_updated": "2025-05-06T11:21:26.291015-07:00"
+    },
+    {
+      "date": "2025-05-04",
+      "github_commits": 1450,
+      "twitter_followers": 84,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 23,
+      "total_followers": 166,
+      "ratio": 8.7,
+      "last_updated": "2025-05-06T11:21:26.291021-07:00"
+    },
+    {
+      "date": "2025-05-05",
+      "github_commits": 1453,
+      "twitter_followers": 84,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 23,
+      "total_followers": 166,
+      "ratio": 8.8,
+      "last_updated": "2025-05-06T11:21:26.291026-07:00"
+    },
+    {
+      "date": "2025-05-06",
+      "github_commits": 1456,
+      "twitter_followers": 85,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 168,
+      "ratio": 8.7,
+      "last_updated": "2025-05-06T23:32:04.330601-07:00"
+    },
+    {
+      "date": "2025-05-07",
+      "github_commits": 1460,
+      "twitter_followers": 87,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 170,
+      "ratio": 8.6,
+      "last_updated": "2025-05-07T23:32:07.563051-07:00"
+    },
+    {
+      "date": "2025-05-08",
+      "github_commits": 1460,
+      "twitter_followers": 88,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 24,
+      "total_followers": 170,
+      "ratio": 8.6,
+      "last_updated": "2025-05-08T23:32:04.591943-07:00"
+    },
+    {
+      "date": "2025-05-09",
+      "github_commits": 1462,
+      "twitter_followers": 90,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 24,
+      "total_followers": 172,
+      "ratio": 8.5,
+      "last_updated": "2025-05-09T23:32:04.018699-07:00"
+    },
+    {
+      "date": "2025-05-10",
+      "github_commits": 1475,
+      "twitter_followers": 92,
+      "youtube_subscribers": 58,
+      "bluesky_followers": 26,
+      "total_followers": 176,
+      "ratio": 8.4,
+      "last_updated": "2025-05-10T23:32:02.952969-07:00"
+    },
+    {
+      "date": "2025-05-11",
+      "github_commits": 1522,
+      "twitter_followers": 94,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 26,
+      "total_followers": 179,
+      "ratio": 8.5,
+      "last_updated": "2025-05-11T23:32:04.715160-07:00"
+    },
+    {
+      "date": "2025-05-12",
+      "github_commits": 1526,
+      "twitter_followers": 91,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 174,
+      "ratio": 8.8,
+      "last_updated": "2025-05-12T23:32:04.275125-07:00"
+    },
+    {
+      "date": "2025-05-13",
+      "github_commits": 1544,
+      "twitter_followers": 93,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 176,
+      "ratio": 8.8,
+      "last_updated": "2025-05-13T23:32:08.558449-07:00"
+    },
+    {
+      "date": "2025-05-14",
+      "github_commits": 1546,
+      "twitter_followers": 93,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 176,
+      "ratio": 8.8,
+      "last_updated": "2025-05-14T23:32:06.613952-07:00"
+    },
+    {
+      "date": "2025-05-15",
+      "github_commits": 1554,
+      "twitter_followers": 92,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 175,
+      "ratio": 8.9,
+      "last_updated": "2025-05-15T23:32:05.626240-07:00"
+    },
+    {
+      "date": "2025-05-16",
+      "github_commits": 1554,
+      "twitter_followers": 92,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 175,
+      "ratio": 8.9,
+      "last_updated": "2025-05-16T23:32:04.140674-07:00"
+    },
+    {
+      "date": "2025-05-17",
+      "github_commits": 1554,
+      "twitter_followers": 91,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 174,
+      "ratio": 8.9,
+      "last_updated": "2025-05-17T23:32:05.279236-07:00"
+    },
+    {
+      "date": "2025-05-18",
+      "github_commits": 1557,
+      "twitter_followers": 91,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 174,
+      "ratio": 8.9,
+      "last_updated": "2025-05-18T23:32:05.179815-07:00"
+    },
+    {
+      "date": "2025-05-19",
+      "github_commits": 1557,
+      "twitter_followers": 93,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 176,
+      "ratio": 8.8,
+      "last_updated": "2025-05-19T23:32:08.136414-07:00"
+    },
+    {
+      "date": "2025-05-20",
+      "github_commits": 1557,
+      "twitter_followers": 95,
+      "youtube_subscribers": 60,
+      "bluesky_followers": 24,
+      "total_followers": 179,
+      "ratio": 8.7,
+      "last_updated": "2025-05-20T23:32:06.978624-07:00"
+    },
+    {
+      "date": "2025-05-21",
+      "github_commits": 1562,
+      "twitter_followers": 96,
+      "youtube_subscribers": 60,
+      "bluesky_followers": 24,
+      "total_followers": 180,
+      "ratio": 8.7,
+      "last_updated": "2025-05-21T23:32:04.701683-07:00"
+    },
+    {
+      "date": "2025-05-22",
+      "github_commits": 1569,
+      "twitter_followers": 96,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 179,
+      "ratio": 8.8,
+      "last_updated": "2025-05-22T23:32:05.077174-07:00"
+    },
+    {
+      "date": "2025-05-23",
+      "github_commits": 1569,
+      "twitter_followers": 100,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 183,
+      "ratio": 8.6,
+      "last_updated": "2025-05-23T23:32:04.302522-07:00"
+    },
+    {
+      "date": "2025-05-24",
+      "github_commits": 1569,
+      "twitter_followers": 100,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 183,
+      "ratio": 8.6,
+      "last_updated": "2025-05-24T23:32:04.565852-07:00"
+    },
+    {
+      "date": "2025-05-25",
+      "github_commits": 1569,
+      "twitter_followers": 101,
+      "youtube_subscribers": 59,
+      "bluesky_followers": 24,
+      "total_followers": 184,
+      "ratio": 8.5,
+      "last_updated": "2025-05-25T23:32:06.320230-07:00"
+    },
+    {
+      "date": "2025-05-26",
+      "github_commits": 1571,
+      "twitter_followers": 99,
+      "youtube_subscribers": 60,
+      "bluesky_followers": 24,
+      "total_followers": 183,
+      "ratio": 8.6,
+      "last_updated": "2025-05-26T23:32:07.829927-07:00"
+    },
+    {
+      "date": "2025-05-27",
+      "github_commits": 1574,
+      "twitter_followers": 99,
+      "youtube_subscribers": 60,
+      "bluesky_followers": 24,
+      "total_followers": 183,
+      "ratio": 8.6,
+      "last_updated": "2025-05-27T23:32:07.018732-07:00"
+    },
+    {
+      "date": "2025-05-28",
+      "github_commits": 1590,
+      "twitter_followers": 103,
+      "youtube_subscribers": 60,
+      "bluesky_followers": 24,
+      "total_followers": 187,
+      "ratio": 8.5,
+      "last_updated": "2025-05-28T23:32:08.235953-07:00"
+    },
+    {
+      "date": "2025-05-29",
+      "github_commits": 1602,
+      "twitter_followers": 106,
+      "youtube_subscribers": 60,
+      "bluesky_followers": 24,
+      "total_followers": 190,
+      "ratio": 8.4,
+      "last_updated": "2025-05-29T23:32:05.422903-07:00"
+    },
+    {
+      "date": "2025-05-30",
+      "github_commits": 1612,
+      "twitter_followers": 112,
+      "youtube_subscribers": 60,
+      "bluesky_followers": 24,
+      "total_followers": 196,
+      "ratio": 8.2,
+      "last_updated": "2025-05-30T23:32:06.917102-07:00"
+    },
+    {
+      "date": "2025-05-31",
+      "github_commits": 1612,
+      "twitter_followers": 113,
+      "youtube_subscribers": 60,
+      "bluesky_followers": 24,
+      "total_followers": 197,
+      "ratio": 8.2,
+      "last_updated": "2025-05-31T08:02:04.492514-07:00"
+    }
+  ]
+}
