@@ -39,6 +39,46 @@ Contains the AWS Cloud Development Kit (CDK) code for infrastructure deployment:
 
 - `app.py`: Main CDK application defining all AWS resources
 - `requirements.txt`: Python dependencies for the CDK application
+- `deploy.sh`: Automated deployment script
+- `DEPLOYMENT.md`: Detailed deployment documentation
+
+## Deployment Scripts
+
+### Quick Deployment
+
+The easiest way to deploy is using the automated script:
+
+```bash
+cd cdk_deployment
+./deploy.sh
+```
+
+### Check Deployment Status
+
+From the project root:
+
+```bash
+./check-deployment.sh
+```
+
+Or from the cdk_deployment directory:
+
+```bash
+./deploy.sh status
+```
+
+### Deployment Commands
+
+```bash
+# Deploy the application
+./deploy.sh
+
+# Check deployment status
+./deploy.sh status
+
+# Show help
+./deploy.sh help
+```
 
 ## Core Functionality
 
@@ -77,15 +117,15 @@ The application is deployed on AWS with the following components:
    - Generate test data with the historical data generator
 
 2. **Deployment**:
-   - Use the CDK application to deploy all resources to AWS
+   - Use the automated `deploy.sh` script for easy deployment
    - The Lambda function is packaged and deployed automatically
    - CloudFront distribution is set up for the website
 
 ## Getting Started
 
 1. Set up Python virtual environments for both the Lambda function and CDK deployment
-2. Configure required API keys and credentials
-3. Deploy using the CDK application
+2. Configure required API keys and credentials in AWS Systems Manager
+3. Deploy using the automated script: `cd cdk_deployment && ./deploy.sh`
 4. The website will be available through the CloudFront distribution URL
 
 ## Security Considerations
@@ -98,4 +138,10 @@ The application is deployed on AWS with the following components:
 
 - The Lambda function runs automatically on a schedule
 - Historical data is preserved and backed up
-- Alerts are sent to Discord for any errors or issues 
+- Alerts are sent to Discord for any errors or issues
+
+## Documentation
+
+- `cdk_deployment/DEPLOYMENT.md`: Detailed deployment guide
+- `cdk_deployment/README.md`: CDK-specific documentation
+- `lambda_function/README.md`: Lambda function documentation 
