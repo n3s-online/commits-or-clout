@@ -27,7 +27,7 @@ def get_html_template():
     <!-- Add Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Plausible Analytics -->
-    <script defer data-domain="commits.willness.dev" src="https://plausible.io/js/script.js"></script>
+    <script defer data-domain="commits.willness.dev" src="https://plausible-analytics-ce-production-d9c9.up.railway.app/js/script.js"></script>
     <style>
         :root {
             --bg-color: #0d1117;
